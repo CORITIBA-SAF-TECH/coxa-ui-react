@@ -1,0 +1,61 @@
+{
+  "name": "coxa-ui-react",
+  "version": "0.1.0",
+  "description": "Componentes React do CoxaUI para padronização dos projetos web do Coritiba SAF",
+  "type": "module",
+  "main": "./dist/coxa-ui-react.umd.cjs",
+  "module": "./dist/coxa-ui-react.js",
+  "exports": {
+    ".": {
+      "import": "./dist/coxa-ui-react.js",
+      "require": "./dist/coxa-ui-react.umd.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "logo.png",
+    "ogimage.png"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "design-system",
+    "ui",
+    "react",
+    "components",
+    "coritiba",
+    "coritiba-saf",
+    "coxa-ui"
+  ],
+  "author": "Coritiba Foot Ball Club — SAF",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CORITIBA-SAF-TECH/coxa-ui-react.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CORITIBA-SAF-TECH/coxa-ui-react/issues"
+  },
+  "homepage": "https://github.com/CORITIBA-SAF-TECH/coxa-ui-react#readme",
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "sweetalert2": "^11.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "vite": "^5.4.0"
+  }
+}
