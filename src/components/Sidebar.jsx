@@ -15,13 +15,31 @@ export function Sidebar({ children, className = '', ...rest }) {
   return <aside id="sidebar" className={cls} {...rest}>{children}</aside>;
 }
 
-/* Botão circular flutuante de recolher/expandir — irmão direto da Sidebar */
-export function SidebarToggle({ title = 'Recolher menu' }) {
+/* Rodapé da sidebar: dois botões empilhados sempre na base.
+   Acima: voltar ao portal. Abaixo: recolher/expandir a sidebar.
+   Deve ficar DENTRO da <Sidebar>, após o <SidebarScroll>. */
+export function SidebarFooter({
+  portalUrl = '#',
+  portalLabel = 'Voltar ao portal',
+  onPortalClick,
+  toggleLabel
+}) {
   const sb = useSidebar();
+  const collapsed = sb?.collapsed;
   return (
-    <button className="sb-toggle-btn" onClick={sb?.toggle} title={title} type="button">
-      <i className="ti ti-chevron-left" />
-    </button>
+    <div className="sb-footer">
+      <a className="sb-foot-btn sb-foot-back" href={portalUrl} onClick={onPortalClick} title={collapsed ? portalLabel : undefined}>
+        <i className="ti ti-arrow-back-up" /><span>{portalLabel}</span>
+      </a>
+      <button
+        className="sb-foot-btn sb-foot-toggle"
+        type="button"
+        onClick={sb?.toggle}
+        title={toggleLabel || (collapsed ? 'Expandir menu' : 'Recolher menu')}
+      >
+        <i className="ti ti-chevrons-left" /><span>Recolher menu</span>
+      </button>
+    </div>
   );
 }
 

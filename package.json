@@ -1,6 +1,6 @@
 {
   "name": "coxa-ui-react",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Componentes React do CoxaUI para padronização dos projetos web do Coritiba SAF",
   "type": "module",
   "main": "./dist/coxa-ui-react.umd.cjs",
@@ -15,7 +15,8 @@
   "files": [
     "dist",
     "logo.png",
-    "ogimage.png"
+    "ogimage.png",
+    "llms.txt"
   ],
   "sideEffects": [
     "**/*.css"

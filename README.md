@@ -4,6 +4,8 @@
 
 Componentes React do **CoxaUI**, o design system dos projetos web do **Coritiba Foot Ball Club (SAF)**. Projeto independente do [coxa-ui](https://github.com/CORITIBA-SAF-TECH/coxa-ui) (HTML/CSS/JS via CDN): mesmo visual, mesmas classes e o mesmo CSS como base, mas com componentes React de verdade (estado, props e hooks) para aplicações SPA.
 
+> **Gerando código com IA?** O arquivo [`llms.txt`](llms.txt) traz orientações, regras e exemplos de todos os componentes prontos para alimentar assistentes (Claude, Copilot…). Ele é publicado junto ao pacote no npm e servido em `/llms.txt` no playground.
+
 ## Instalação
 
 ```bash
@@ -128,9 +130,15 @@ npm run build   # gera dist/ (lib ES + UMD + CSS)
 
 ## Changelog
 
-### v0.1.0
+### v1.0.0
 
-- Versão inicial do CoxaUI React
-- Port completo dos componentes do CoxaUI v0.1.1 para React: layout com sidebar recolhível, botões, badges, alertas, cards, stat cards, formulários, combobox com busca, modal com tamanhos, tabs, accordion, dropdown, timeline, steps, gráficos (Chart.js com paleta verde) e utilitários (toast, confirm, dark mode)
+Primeira versão estável.
+
+- **Layout**: cabeçalho e rodapé offwhite (superfície escura no dark mode); sidebar verde, recolhida por padrão no desktop (100px) com scrollbar oculta mas rolável
+- **Sidebar**: `SidebarFooter` com dois botões fixos na base — voltar ao portal (branco em leve destaque) e recolher/expandir; no mobile os botões e links mostram texto (drawer). Substitui o antigo `SidebarToggle`
+- **Formulários**: `<textarea>` estilizado automaticamente; `Combobox` (select com busca) e `MultiCombobox` (seleção múltipla com chips)
+- **Componentes**: botões (`xs`–`lg`), badges, alertas, cards, stat cards, modal com tamanhos, tabs, accordion, dropdown, timeline, steps, gráficos (Chart.js, paleta em variações do verde primary)
+- **Utilitários**: `useDarkMode`, `useSidebar`, `coxaToast`, `coxaConfirm`
 - CSS base compartilhado com o CoxaUI vanilla; chaves de `localStorage` compatíveis (`coxaui-dark`, `coxaui-sb`)
-- Playground de desenvolvimento em `demo/`
+- `llms.txt` com orientações para gerar código com IA (publicado no pacote e servido em `/llms.txt` no playground)
+- Playground de documentação em `demo/`, com deploy na Vercel (`npm run build:demo`)

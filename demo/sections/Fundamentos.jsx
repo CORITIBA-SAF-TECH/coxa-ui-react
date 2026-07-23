@@ -5,8 +5,13 @@ export function SecInstalacao() {
   return (
     <DocsSection id="instalacao" icon="download" title="Instalação"
       desc="Biblioteca de componentes React do CoxaUI. Projeto independente da versão HTML/CSS/JS — mesmo visual, mesmos padrões.">
-      <Alert type="warn" title="Versão beta">
-        O CoxaUI React está em desenvolvimento ativo. A API dos componentes pode mudar entre versões.
+      <Alert type="info" title="Gerando código com IA?" icon="robot">
+        Aponte seu assistente (Claude, Copilot…) para o{' '}
+        <a href="/llms.txt" target="_blank" rel="noreferrer" style={{ fontWeight: 700 }}>
+          <i className="ti ti-external-link" style={{ verticalAlign: '-2px' }} /> llms.txt
+        </a>{' '}
+        antes de gerar telas: ele traz orientações, regras (ex.: nunca usar vermelho),
+        props e exemplos de todos os componentes.
       </Alert>
       <SubSection title="Via npm">
         <CodeBlock>{`npm install coxa-ui-react react react-dom
@@ -18,8 +23,8 @@ import 'coxa-ui-react/style.css';`}</CodeBlock>
         <CodeBlock>{`import 'coxa-ui-react/style.css';
 import {
   AppLayout, ContentCol, Overlay, Main,
-  Sidebar, SidebarToggle, SidebarHeader, SidebarBrand,
-  SidebarScroll, SidebarGroup, SidebarLink,
+  Sidebar, SidebarHeader, SidebarBrand, SidebarScroll,
+  SidebarGroup, SidebarLink, SidebarFooter,
   Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, Footer
 } from 'coxa-ui-react';
 
@@ -30,12 +35,13 @@ export default function App() {
         <SidebarHeader />
         <SidebarBrand logo={logo} subtitle="minha aplicação" />
         <SidebarScroll>
-          <SidebarLink icon="layout-dashboard" label="Dashboard" active />
+          <SidebarLink icon="layout-dashboard" label="Dashboard" href="/" active />
           <SidebarGroup>Operações</SidebarGroup>
           <SidebarLink icon="login" label="Registrar Entrada" href="/entrada" />
         </SidebarScroll>
+        {/* Rodapé fixo: voltar ao portal (acima) + recolher/expandir (abaixo) */}
+        <SidebarFooter portalUrl="https://portal.exemplo" portalLabel="Voltar ao portal" />
       </Sidebar>
-      <SidebarToggle />
       <Overlay />
       <ContentCol>
         <Header>
@@ -50,10 +56,11 @@ export default function App() {
   );
 }`}</CodeBlock>
         <p style={{ fontSize: '.84rem', color: 'var(--text2)', marginTop: 10 }}>
-          A sidebar inicia recolhida por padrão no desktop e vira drawer no mobile.
-          As preferências do usuário (sidebar e modo escuro) ficam salvas em <code>localStorage</code> com
-          as mesmas chaves do CoxaUI vanilla (<code>coxaui-sb</code>, <code>coxaui-dark</code>).
-          Esta própria página usa o layout: teste o botão circular na borda da sidebar.
+          O <code>&lt;SidebarFooter&gt;</code> fica dentro da <code>&lt;Sidebar&gt;</code>, após o
+          <code>&lt;SidebarScroll&gt;</code>, e já traz os dois botões da base: voltar ao portal e recolher/expandir.
+          A sidebar inicia recolhida no desktop e vira drawer no mobile. As preferências (sidebar e modo escuro)
+          ficam salvas em <code>localStorage</code> com as mesmas chaves do CoxaUI vanilla
+          (<code>coxaui-sb</code>, <code>coxaui-dark</code>). Esta própria página usa o layout.
         </p>
       </SubSection>
     </DocsSection>

@@ -1,0 +1,240 @@
+# CoxaUI React — Guia de uso para IA
+
+Este arquivo orienta assistentes de IA (Claude, Copilot, etc.) a construir aplicações React usando o **coxa-ui-react**, o design system do Coritiba Foot Ball Club (SAF). Leia por completo antes de gerar código.
+
+## Regras inegociáveis
+
+1. **Vermelho é proibido.** Estados de perigo/erro usam laranja/âmbar. Nunca use `#dc2626`, `#ef4444`, `#fee2e2` etc. Para "danger" use `variant="danger"` (já é laranja `#ea580c`).
+2. **Não reescreva o CSS.** Todos os estilos vêm de `coxa-ui-react/style.css`. Use os componentes e as classes existentes; não crie CSS paralelo para o que já existe.
+3. **Ícones** são do Tabler Icons v3, já carregados. Nos componentes passe só o nome (`icon="check"`); em markup solto use `<i className="ti ti-check" />`.
+4. **Importe o CSS uma vez** no entry da aplicação: `import 'coxa-ui-react/style.css'`.
+5. **Cores da marca:** primary `#006B3C` (verde), accent `#fad716` (amarelo), danger `#ea580c` (laranja). Header/rodapé são offwhite; a sidebar é verde.
+
+## Instalação
+
+```bash
+npm install coxa-ui-react react react-dom
+```
+
+```jsx
+// main.jsx / index.jsx — uma vez só
+import 'coxa-ui-react/style.css';
+```
+
+## Esqueleto de página (copie como base)
+
+```jsx
+import 'coxa-ui-react/style.css';
+import {
+  AppLayout, ContentCol, Overlay, Main,
+  Sidebar, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, SidebarFooter,
+  Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, Footer
+} from 'coxa-ui-react';
+import logo from './logo.png';
+
+export default function App() {
+  return (
+    <AppLayout>
+      <Sidebar>
+        <SidebarHeader />                                {/* cabeçalho do drawer (mobile) */}
+        <SidebarBrand logo={logo} subtitle="minha aplicação" />
+        <SidebarScroll>
+          <SidebarLink icon="layout-dashboard" label="Dashboard" href="/" active />
+          <SidebarGroup>Operações</SidebarGroup>
+          <SidebarLink icon="login" label="Registrar Entrada" href="/entrada" />
+          <SidebarLink icon="users" label="Visitantes" href="/visitantes" badge={5} />
+        </SidebarScroll>
+        <SidebarFooter portalUrl="https://portal.exemplo" portalLabel="Voltar ao portal" />
+      </Sidebar>
+      <Overlay />
+      <ContentCol>
+        <Header>
+          <MenuButton />
+          <HeaderPage icon="layout-dashboard" title="Dashboard" desc="Visão geral" />
+          <HeaderRight><DarkModeButton /></HeaderRight>
+        </Header>
+        <Main>{/* conteúdo */}</Main>
+        <Footer left="Minha App © 2026 Coritiba SAF" />
+      </ContentCol>
+    </AppLayout>
+  );
+}
+```
+
+**Estrutura obrigatória do layout:**
+- `<AppLayout>` é a raiz (flex row). Dentro: `<Sidebar>`, `<Overlay>` e `<ContentCol>`.
+- `<SidebarFooter>` fica **dentro** de `<Sidebar>`, depois do `<SidebarScroll>` — ele já renderiza os dois botões da base (voltar ao portal + recolher/expandir).
+- `<ContentCol>` contém `<Header>`, `<Main>` e `<Footer>`, nessa ordem.
+- A sidebar inicia **recolhida** no desktop; a preferência (recolhida/aberta) e o modo escuro persistem em `localStorage` (chaves `coxaui-sb` e `coxaui-dark`, compartilhadas com o CoxaUI vanilla).
+
+## Componentes e props principais
+
+### Botões
+```jsx
+<Button variant="primary" size="sm" icon="check">Salvar</Button>
+// variant: primary | secondary | danger | warning | accent | ghost
+// size:    xs | sm | (padrão) | lg
+// as="a" href="..."  → renderiza como link
+<ButtonGroup>…</ButtonGroup>
+<IconButton icon="dots-vertical" onClick={…} />
+```
+
+### Badges e tags
+```jsx
+<Badge color="green" icon="circle-filled">Ativo</Badge>
+// color: green | blue | orange | purple | red(âmbar) | yellow | gray | primary | accent
+<BadgeInside /> <BadgeOutside />
+<TagCloud><Tag>financeiro</Tag></TagCloud>
+```
+
+### Alertas
+```jsx
+<Alert type="success" title="Sucesso">Operação realizada.</Alert>
+// type: info | success | warn | danger
+```
+
+### Cards e métricas
+```jsx
+<StatCards>
+  <StatCard icon="users" color="green" value="42" label="Visitantes" />
+</StatCards>
+// StatCard color: green | blue | orange | purple | red | yellow
+
+<Cards>
+  <CardItem section="Financeiro" title="Manual" subtitle="…"
+    meta={<span>Atualizado: 28 jun</span>} tags={<Tag>manual</Tag>} />
+</Cards>
+
+<AdmCard icon="users" title="Visitantes" actions={<Button size="sm" icon="plus">Novo</Button>}>…</AdmCard>
+<LinkCards><LinkCard icon="mail" href="…">E-mail</LinkCard></LinkCards>
+```
+
+### Formulários
+```jsx
+<FormCard icon="user-plus" title="Novo Visitante">
+  <FormRow>                                 {/* cols={2} padrão, ou cols={3} */}
+    <FormGroup label="Nome" required>
+      <input type="text" placeholder="João" />
+    </FormGroup>
+    <FormGroup label="Horário" required>
+      <input type="time" />
+    </FormGroup>
+  </FormRow>
+  <FormActions>
+    <Button variant="secondary">Cancelar</Button>
+    <Button icon="check">Salvar</Button>
+  </FormActions>
+</FormCard>
+
+// Inputs nativos (input, select, textarea) já herdam o estilo — não precisa classe.
+// <textarea rows={4} placeholder="..." />  → estilizado automaticamente, redimensiona na vertical.
+<Toggle checked={x} onChange={setX} label="Notificações" />
+<ChkOpt checked={x} onChange={setX}>Autorizado</ChkOpt>
+<TipoOpts>
+  <TipoOpt icon="file-text" name="fmt" checked={v==='html'} onChange={() => setV('html')}>HTML</TipoOpt>
+</TipoOpts>
+```
+
+### Combobox (select com busca)
+```jsx
+const [depto, setDepto] = useState('');
+<Combobox
+  options={['Financeiro', 'RH', { label: 'Tecnologia', value: 12 }]}
+  value={depto} onChange={setDepto} name="departamento" />
+// options: string[] ou { label, value }[]. name → gera input hidden p/ forms.
+
+// Seleção múltipla — as escolhas viram chips removíveis; value é um array:
+const [tags, setTags] = useState([]);
+<MultiCombobox options={['financeiro','rh','ti']} value={tags} onChange={setTags} name="tags" />
+```
+
+### Modal (controlado)
+```jsx
+const [open, setOpen] = useState(false);
+<Button onClick={() => setOpen(true)}>Abrir</Button>
+<Modal open={open} onClose={() => setOpen(false)} title="Saída" icon="logout" size="lg"
+  actions={<>
+    <Button variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button>
+    <Button icon="logout">Confirmar</Button>
+  </>}>
+  <ModalInfo><strong>João</strong><small>Fornecedor</small></ModalInfo>
+</Modal>
+// size: xs(300) | sm(380) | (480) | lg(680) | xl(920) | full(96vw)
+```
+
+### Tabs, Accordion, Dropdown
+```jsx
+const [aba, setAba] = useState('todos');
+<Tabs tabs={[{id:'todos',label:'Todos'},{id:'ativos',label:'Ativos'}]} active={aba} onChange={setAba} />
+<TabPanel show={aba==='todos'}>…</TabPanel>
+
+<Accordion>
+  <AccordionItem title="Pergunta?" defaultOpen>Resposta</AccordionItem>
+</Accordion>
+
+<Dropdown label="Ações">
+  <DropdownItem icon="eye" onClick={…}>Ver</DropdownItem>
+  <DropdownSep />
+  <DropdownItem icon="trash" danger>Excluir</DropdownItem>
+</Dropdown>
+```
+
+### Padrões
+```jsx
+<Timeline><TimelineItem date="28 jun" title="Publicado" variant="warn">…</TimelineItem></Timeline>
+<Hist><HistItem badge="Entrada" title="João entrou" meta={['08h30','Sede']} /></Hist>
+<Steps items={['Localidade','Portaria','Visitante']} current={1} />
+<Breadcrumb items={[{label:'Início',href:'/'},{label:'Atual'}]} />
+<FilterPills><FilterPill active>Todos</FilterPill><FilterPill icon="building">Sede</FilterPill></FilterPills>
+<Progress label="Doc" value={75} variant="success" />  {/* variant: success|warning|(padrão) */}
+<Empty icon="users" action={<Button size="sm" icon="plus">Novo</Button>}>Nada encontrado.</Empty>
+<Spinner label="Carregando..." /> <Spinner inline />
+<Avatar size="lg">JD</Avatar> <AvatarGroup>…</AvatarGroup>
+<KVList><KV k="Nome">João</KV><KVDivider /><KV k="Status"><BadgeInside/></KV></KVList>
+```
+
+### Gráficos (Chart.js v4)
+```jsx
+<CoxaChart type="line" height={260} data={{
+  labels: ['Jan','Fev','Mar'],
+  datasets: [{ label: 'Visitantes', data: [120,190,150], fill: true, tension: .35 }]
+}} />
+// type: line | bar | doughnut | pie | polarArea | radar | scatter | bubble
+// Barras horizontais: options={{ indexAxis: 'y' }}
+// Misto: um dataset com type próprio, ex. { type: 'line', ... } junto de barras
+```
+**Não defina cores nos datasets.** Sem cor, cada série recebe automaticamente uma variação do verde primary (nunca vermelho) e o tema claro/escuro é aplicado sozinho.
+
+### Hooks e utilitários
+```jsx
+import { useDarkMode, useSidebar, coxaToast, coxaConfirm } from 'coxa-ui-react';
+
+const { dark, toggle } = useDarkMode();          // <DarkModeButton /> já faz isso no header
+const { collapsed, toggle, close } = useSidebar(); // só dentro de <AppLayout>
+
+coxaToast('success', 'Salvo com sucesso!');       // icon: success | error | warning | info
+const ok = await coxaConfirm({
+  title: 'Excluir?', text: 'Não pode ser desfeito.',
+  confirmText: 'Excluir', color: '#ea580c'        // sempre laranja, nunca vermelho
+});
+if (ok) { /* … */ }
+```
+
+## Erros comuns a evitar
+
+- ❌ Usar `SidebarToggle` (não existe mais) — use `<SidebarFooter />` dentro da `<Sidebar>`.
+- ❌ Esquecer de importar `coxa-ui-react/style.css` — sem ele nada tem estilo.
+- ❌ Colocar `<SidebarFooter>` fora da `<Sidebar>` — ele precisa estar dentro, após o `<SidebarScroll>`.
+- ❌ Definir cores manuais nos gráficos ou usar vermelho em qualquer lugar.
+- ❌ Recriar layout com `<div>` e CSS próprio quando já há `AppLayout`/`ContentCol`/`Header`/`Footer`.
+- ❌ Usar `Modal` sem controlar `open`/`onClose` (ele é controlado, não gerencia estado interno).
+
+## Referência rápida de exports
+
+Layout: `AppLayout, ContentCol, Main, Overlay, Sidebar, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, LiveClock, Footer`
+Componentes: `Button, ButtonGroup, IconButton, Badge, BadgeInside, BadgeOutside, Tag, TagCloud, Alert, Spinner, Avatar, AvatarGroup, Breadcrumb, FilterPills, FilterPill, Progress, Empty, KVList, KV, KVDivider, Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard`
+Formulários: `FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox`
+Interativos: `Modal, ModalInfo, Tabs, TabPanel, LinksTabs, LinksPanel, Accordion, AccordionItem, Dropdown, DropdownItem, DropdownSep`
+Padrões: `Timeline, TimelineItem, Hist, HistItem, Steps`
+Gráficos: `CoxaChart, COXA_CHART_COLORS`
+Hooks/utils: `useDarkMode, useSidebar, coxaToast, coxaConfirm, COXAUI_REACT_VERSION`

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   AppLayout, ContentCol, Overlay,
-  Sidebar, SidebarToggle, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink,
+  Sidebar, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink,
   MenuButton, DarkModeButton, IconButton, Footer,
   COXAUI_REACT_VERSION
 } from '../src/index.js';
@@ -98,8 +98,8 @@ export default function App() {
             </span>
           ))}
         </SidebarScroll>
+        <SidebarFooter portalUrl="#" portalLabel="Voltar ao portal" />
       </Sidebar>
-      <SidebarToggle />
       <Overlay />
       <ContentCol>
         <div className="docs-topbar">

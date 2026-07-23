@@ -4,7 +4,7 @@ import {
   Badge, BadgeInside, BadgeOutside, Tag, TagCloud,
   Alert, Avatar, AvatarGroup,
   Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard,
-  FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox,
+  FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox,
   Modal, ModalInfo, Tabs, TabPanel,
   Accordion, AccordionItem,
   Dropdown, DropdownItem, DropdownSep,
@@ -125,6 +125,7 @@ export function SecFormularios() {
   const [restrita, setRestrita] = useState(false);
   const [fmt, setFmt] = useState('html');
   const [depto, setDepto] = useState('');
+  const [tags, setTags] = useState(['Financeiro', 'Jurídico']);
   return (
     <DocsSection id="formularios" icon="forms" title="Formulários"
       desc="Inputs herdam o estilo do CSS do CoxaUI automaticamente (borda verde, foco primário, dark mode).">
@@ -142,6 +143,9 @@ export function SecFormularios() {
     <FormGroup label="Data" required><input type="date" /></FormGroup>
     <FormGroup label="Horário de Entrada" required><input type="time" /></FormGroup>
   </FormRow>
+  <FormGroup label="Observações" hint="(opcional)" fieldHint="Máximo de 500 caracteres">
+    <textarea placeholder="Informações adicionais..." rows={3} />
+  </FormGroup>
   <FormActions>
     <Button variant="secondary">Cancelar</Button>
     <Button icon="check">Salvar</Button>
@@ -160,11 +164,28 @@ export function SecFormularios() {
               <FormGroup label="Data" required><input type="date" /></FormGroup>
               <FormGroup label="Horário de Entrada" required><input type="time" defaultValue="08:30" /></FormGroup>
             </FormRow>
+            <FormGroup label="Observações" hint="(opcional)" fieldHint="Máximo de 500 caracteres">
+              <textarea placeholder="Informações adicionais..." rows={3} />
+            </FormGroup>
             <FormActions>
               <Button variant="secondary">Cancelar</Button>
               <Button icon="check">Salvar</Button>
             </FormActions>
           </FormCard>
+        </Demo>
+      </SubSection>
+
+      <SubSection title="Textarea">
+        <Demo code={`{/* O <textarea> é estilizado automaticamente — sem precisar de classe.
+    Redimensionável na vertical; herda foco verde e dark mode. */}
+<FormGroup label="Descrição" fieldHint="Suporta múltiplas linhas">
+  <textarea placeholder="Escreva aqui..." rows={4} />
+</FormGroup>`}>
+          <div style={{ maxWidth: 460 }}>
+            <FormGroup label="Descrição" fieldHint="Suporta múltiplas linhas">
+              <textarea placeholder="Escreva aqui..." rows={4} defaultValue={''} />
+            </FormGroup>
+          </div>
         </Demo>
       </SubSection>
 
@@ -187,6 +208,28 @@ export function SecFormularios() {
                 value={depto}
                 onChange={setDepto}
                 name="departamento"
+              />
+            </FormGroup>
+          </div>
+        </Demo>
+      </SubSection>
+
+      <SubSection title="Seleção múltipla (MultiCombobox)">
+        <Demo code={`const [tags, setTags] = useState(['financeiro']);
+
+<MultiCombobox
+  options={['financeiro', 'rh', 'ti', 'jurídico', 'marketing']}
+  value={tags}       // array de valores
+  onChange={setTags}
+  name="tags"        // gera um input hidden por valor (forms)
+/>`}>
+          <div style={{ maxWidth: 420 }}>
+            <FormGroup label="Categorias" fieldHint="Clique para adicionar; ✕ ou Backspace para remover">
+              <MultiCombobox
+                options={['Financeiro', 'Recursos Humanos', 'Tecnologia da Informação', 'Jurídico', 'Comunicação & Marketing', 'Futebol Base', 'Futebol Profissional']}
+                value={tags}
+                onChange={setTags}
+                name="categorias"
               />
             </FormGroup>
           </div>

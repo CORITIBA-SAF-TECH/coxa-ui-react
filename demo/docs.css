@@ -19,13 +19,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+  border-bottom: 1px solid var(--hdr-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
 }
 
 .docs-topbar h1 {
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--hdr-text);
 }
 
 .docs-topbar-right {
@@ -34,21 +35,19 @@
   gap: 8px;
 }
 
-/* Botões ghost sobre o fundo verde do topbar — o !important do
-   .btn-ghost vence style inline, então o override precisa ser aqui */
+/* Botões ghost sobre o cabeçalho offwhite */
 .docs-topbar .btn-ghost {
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, .4);
+  color: var(--text2) !important;
+  border-color: var(--border2);
 }
 
 .docs-topbar .btn-ghost:hover {
-  color: var(--accent) !important;
-  border-color: var(--accent);
+  color: var(--primary) !important;
+  border-color: var(--primary);
 }
 
 .docs-topbar .icon-btn {
-  color: #fff;
-  border-color: rgba(255, 255, 255, .4);
+  color: var(--hdr-text);
 }
 
 .docs-content {

@@ -3,12 +3,12 @@
    ══════════════════════════════════════════════════════════════════ */
 import './styles/coxa-ui.css';
 
-export const COXAUI_REACT_VERSION = '0.1.0';
+export const COXAUI_REACT_VERSION = '1.0.0';
 
 /* Layout */
 export { AppLayout, ContentCol, Overlay, Main, useSidebar } from './components/AppLayout.jsx';
 export {
-  Sidebar, SidebarToggle, SidebarHeader, SidebarBrand,
+  Sidebar, SidebarFooter, SidebarHeader, SidebarBrand,
   SidebarScroll, SidebarGroup, SidebarLink
 } from './components/Sidebar.jsx';
 export {
@@ -33,7 +33,7 @@ export {
   FormCard, FormRow, FormGroup, FormActions,
   Toggle, ChkOpt, TipoOpts, TipoOpt
 } from './components/Form.jsx';
-export { Combobox } from './components/Combobox.jsx';
+export { Combobox, MultiCombobox } from './components/Combobox.jsx';
 
 /* Interativos */
 export { Modal, ModalInfo } from './components/Modal.jsx';
