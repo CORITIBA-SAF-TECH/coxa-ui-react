@@ -4,7 +4,7 @@ import { DocsSection, SubSection, Demo, CodeBlock, Swatch } from '../DocsBlocks.
 export function SecInstalacao() {
   return (
     <DocsSection id="instalacao" icon="download" title="Instalação"
-      desc="Biblioteca de componentes React do CoxaUI. Projeto independente da versão HTML/CSS/JS — mesmo visual, mesmos padrões.">
+      desc="Biblioteca de componentes React do CoxaUI. Projeto independente da versão HTML/CSS/JS: mesmo visual, mesmos padrões.">
       <Alert type="info" title="Gerando código com IA?" icon="robot">
         Aponte seu assistente (Claude, Copilot…) para o{' '}
         <a href="/llms.txt" target="_blank" rel="noreferrer" style={{ fontWeight: 700 }}>
@@ -23,7 +23,7 @@ import 'coxa-ui-react/style.css';`}</CodeBlock>
         <CodeBlock>{`import 'coxa-ui-react/style.css';
 import {
   AppLayout, ContentCol, Overlay, Main,
-  Sidebar, SidebarHeader, SidebarBrand, SidebarScroll,
+  Sidebar, SidebarToggle, SidebarHeader, SidebarBrand, SidebarScroll,
   SidebarGroup, SidebarLink, SidebarFooter,
   Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, Footer
 } from 'coxa-ui-react';
@@ -39,9 +39,11 @@ export default function App() {
           <SidebarGroup>Operações</SidebarGroup>
           <SidebarLink icon="login" label="Registrar Entrada" href="/entrada" />
         </SidebarScroll>
-        {/* Rodapé fixo: voltar ao portal (acima) + recolher/expandir (abaixo) */}
+        {/* Botão "voltar ao portal" fixo na base */}
         <SidebarFooter portalUrl="https://portal.exemplo" portalLabel="Voltar ao portal" />
       </Sidebar>
+      {/* Botão recolher/expandir: círculo flutuante na borda */}
+      <SidebarToggle />
       <Overlay />
       <ContentCol>
         <Header>
@@ -56,8 +58,9 @@ export default function App() {
   );
 }`}</CodeBlock>
         <p style={{ fontSize: '.84rem', color: 'var(--text2)', marginTop: 10 }}>
-          O <code>&lt;SidebarFooter&gt;</code> fica dentro da <code>&lt;Sidebar&gt;</code>, após o
-          <code>&lt;SidebarScroll&gt;</code>, e já traz os dois botões da base: voltar ao portal e recolher/expandir.
+          O <code>&lt;SidebarToggle&gt;</code> é o botão circular flutuante na borda (recolher/expandir) e fica
+          logo após a <code>&lt;Sidebar&gt;</code>. O <code>&lt;SidebarFooter&gt;</code> (opcional) fica dentro da
+          <code>&lt;Sidebar&gt;</code> e traz o botão "voltar ao portal" fixo na base.
           A sidebar inicia recolhida no desktop e vira drawer no mobile. As preferências (sidebar e modo escuro)
           ficam salvas em <code>localStorage</code> com as mesmas chaves do CoxaUI vanilla
           (<code>coxaui-sb</code>, <code>coxaui-dark</code>). Esta própria página usa o layout.
@@ -77,8 +80,8 @@ export function SecCores() {
           <Swatch color="#005530" name="Primary Dark" varName="--primary-dk" />
           <Swatch color="#fad716" name="Accent" varName="--accent" />
           <Swatch color="#00544d" name="Header/Sidebar" varName="--hdr-bg" />
-          <Swatch color="#ea580c" name="Danger (laranja)" varName="—" />
-          <Swatch color="#2563eb" name="Info" varName="—" />
+          <Swatch color="#ea580c" name="Danger (laranja)" varName="" />
+          <Swatch color="#2563eb" name="Info" varName="" />
         </div>
       </SubSection>
     </DocsSection>

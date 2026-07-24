@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
 
-/* Serve o llms.txt (fonte única na raiz do repo) em /llms.txt —
-   no dev server e no build do playground (Vercel). Evita duplicar o arquivo. */
+/* Serve o llms.txt (fonte única na raiz do repo) em /llms.txt no dev server
+   e no build do playground (Vercel). Evita duplicar o arquivo. */
 function llmsTxtPlugin() {
   const file = resolve(__dirname, 'llms.txt');
   return {
@@ -26,7 +26,7 @@ function llmsTxtPlugin() {
 }
 
 export default defineConfig(({ command, mode }) => {
-  /* `npm run build:demo` — gera o playground como site estático (Vercel) */
+  /* `npm run build:demo`: gera o playground como site estático (Vercel) */
   if (mode === 'demo') {
     return {
       plugins: [react(), llmsTxtPlugin()],

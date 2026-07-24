@@ -4,6 +4,7 @@ import {
   Badge, BadgeInside, BadgeOutside, Tag, TagCloud,
   Alert, Avatar, AvatarGroup,
   Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard,
+  TableWrap, Table, SelBar,
   FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox,
   Modal, ModalInfo, Tabs, TabPanel,
   Accordion, AccordionItem,
@@ -176,7 +177,7 @@ export function SecFormularios() {
       </SubSection>
 
       <SubSection title="Textarea">
-        <Demo code={`{/* O <textarea> é estilizado automaticamente — sem precisar de classe.
+        <Demo code={`{/* O <textarea> é estilizado automaticamente: sem precisar de classe.
     Redimensionável na vertical; herda foco verde e dark mode. */}
 <FormGroup label="Descrição" fieldHint="Suporta múltiplas linhas">
   <textarea placeholder="Escreva aqui..." rows={4} />
@@ -317,6 +318,126 @@ export function SecCards() {
   );
 }
 
+const TBL_ROWS = [
+  { id: 1, nome: 'João da Silva', doc: '123.456.789-00', loc: 'Sede', status: 'inside', entrada: '2h30min' },
+  { id: 2, nome: 'Maria Oliveira', loc: 'CT', status: 'pend', entrada: '5h12min', pend: true },
+  { id: 3, nome: 'Ana Souza', loc: 'Sede', status: 'inside', entrada: '0h45min' },
+  { id: 4, nome: 'Carlos Pereira', loc: 'Estádio', status: 'outside', del: true }
+];
+
+export function SecTabelas() {
+  const [q, setQ] = useState('');
+  const [sel, setSel] = useState([]);
+
+  const selectable = TBL_ROWS.filter(r => !r.del);
+  const visiveis = TBL_ROWS.filter(r => r.nome.toLowerCase().includes(q.toLowerCase()));
+  const allChecked = selectable.length > 0 && selectable.every(r => sel.includes(r.id));
+
+  const toggle = id => setSel(s => (s.includes(id) ? s.filter(x => x !== id) : [...s, id]));
+  const toggleAll = () => setSel(allChecked ? [] : selectable.map(r => r.id));
+
+  return (
+    <DocsSection id="tabelas" icon="table" title="Tabelas"
+      desc="Use elementos <table> normais dentro de <TableWrap> — o CSS já estiliza. Linhas: .row-pend (pendente), .row-del (desabilitada). Seleção em lote com <SelBar>.">
+      <Demo code={`import { TableWrap, Table, SelBar, Dropdown, DropdownItem, DropdownSep, BadgeInside } from 'coxa-ui-react';
+
+const [sel, setSel] = useState([]);
+const toggle = id => setSel(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
+
+<input type="text" placeholder="Filtrar tabela..." value={q} onChange={e => setQ(e.target.value)} />
+
+<TableWrap>
+  <Table>
+    <thead>
+      <tr>
+        <th><input type="checkbox" className="sel-chk" checked={allChecked} onChange={toggleAll} /></th>
+        <th>Nome</th><th>Localidade</th><th>Status</th><th>Entrada</th><th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(r => (
+        <tr key={r.id} className={r.pend ? 'row-pend' : r.del ? 'row-del' : ''}>
+          <td className="sel-chk-cell">
+            <input type="checkbox" className="sel-chk" checked={sel.includes(r.id)}
+              onChange={() => toggle(r.id)} disabled={r.del} />
+          </td>
+          <td><strong>{r.nome}</strong></td>
+          <td><span className="badge-loc">{r.loc}</span></td>
+          <td><BadgeInside /></td>
+          <td><span className="elapsed">{r.entrada}</span></td>
+          <td>
+            <Dropdown label="" icon="dots-vertical">
+              <DropdownItem icon="eye">Ver detalhes</DropdownItem>
+              <DropdownSep />
+              <DropdownItem icon="trash" danger>Excluir</DropdownItem>
+            </Dropdown>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </Table>
+</TableWrap>
+
+<SelBar count={sel.length} onClear={() => setSel([])}>
+  <Button size="sm" variant="accent" icon="logout">Saída em lote</Button>
+</SelBar>`}>
+        <div style={{ marginBottom: 10 }}>
+          <input type="text" placeholder="Filtrar tabela..." value={q}
+            onChange={e => setQ(e.target.value)} style={{ maxWidth: 240 }} />
+        </div>
+        <TableWrap>
+          <Table>
+            <thead>
+              <tr>
+                <th className="sel-chk-cell"><input type="checkbox" className="sel-chk" checked={allChecked} onChange={toggleAll} /></th>
+                <th>Nome</th>
+                <th>Localidade</th>
+                <th>Status</th>
+                <th>Entrada</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visiveis.map(r => (
+                <tr key={r.id} className={r.pend ? 'row-pend' : r.del ? 'row-del' : ''}>
+                  <td className="sel-chk-cell">
+                    <input type="checkbox" className="sel-chk" checked={sel.includes(r.id)}
+                      onChange={() => toggle(r.id)} disabled={r.del} />
+                  </td>
+                  <td>
+                    <strong>{r.nome}</strong>
+                    {r.doc && <><br /><small style={{ color: 'var(--text3)' }}>CPF: {r.doc}</small></>}
+                  </td>
+                  <td><span className="badge-loc">{r.loc}</span></td>
+                  <td>
+                    {r.status === 'inside' && <BadgeInside />}
+                    {r.status === 'pend' && <span className="status-pend"><i className="ti ti-clock" /> Pendente</span>}
+                    {r.status === 'outside' && <BadgeOutside />}
+                  </td>
+                  <td><span className={`elapsed ${r.pend ? 'long' : ''}`.trim()}>{r.entrada || ''}</span></td>
+                  <td>
+                    {!r.del && (
+                      <Dropdown label="" icon="dots-vertical">
+                        <DropdownItem icon="eye" onClick={() => coxaToast('success', `Ver: ${r.nome}`)}>Ver detalhes</DropdownItem>
+                        <DropdownItem icon="edit">Editar</DropdownItem>
+                        <DropdownSep />
+                        <DropdownItem icon="trash" danger>Excluir</DropdownItem>
+                      </Dropdown>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableWrap>
+        <SelBar count={sel.length} onClear={() => setSel([])}>
+          <Button size="sm" variant="accent" icon="logout" onClick={() => coxaToast('success', `${sel.length} em lote`)}>Saída em lote</Button>
+        </SelBar>
+      </Demo>
+    </DocsSection>
+  );
+}
+
 export function SecStatCards() {
   return (
     <DocsSection id="stat-cards" icon="chart-bar" title="Stat Cards"
@@ -442,7 +563,7 @@ export function SecAccordion() {
             Use o menu Operações → Registrar Entrada.
           </AccordionItem>
           <AccordionItem title="Como funciona o modo escuro?">
-            Clique na lua no header — a preferência fica salva no navegador.
+            Clique na lua no header: a preferência fica salva no navegador.
           </AccordionItem>
         </Accordion>
       </Demo>

@@ -1,14 +1,14 @@
 /* ══════════════════════════════════════════════════════════════════
-   CoxaUI React — Coritiba Foot Ball Club Internal Design System
+   CoxaUI React: Coritiba Foot Ball Club Internal Design System
    ══════════════════════════════════════════════════════════════════ */
 import './styles/coxa-ui.css';
 
-export const COXAUI_REACT_VERSION = '1.0.0';
+export const COXAUI_REACT_VERSION = '1.0.1';
 
 /* Layout */
 export { AppLayout, ContentCol, Overlay, Main, useSidebar } from './components/AppLayout.jsx';
 export {
-  Sidebar, SidebarFooter, SidebarHeader, SidebarBrand,
+  Sidebar, SidebarToggle, SidebarFooter, SidebarHeader, SidebarBrand,
   SidebarScroll, SidebarGroup, SidebarLink
 } from './components/Sidebar.jsx';
 export {
@@ -27,6 +27,7 @@ export {
 export {
   StatCards, StatCard, Cards, CardItem, AdmCard, LinkCards, LinkCard
 } from './components/Cards.jsx';
+export { TableWrap, Table, SelBar } from './components/Table.jsx';
 
 /* Formulários */
 export {

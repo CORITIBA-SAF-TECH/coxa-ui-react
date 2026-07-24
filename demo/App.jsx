@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   AppLayout, ContentCol, Overlay,
-  Sidebar, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink,
+  Sidebar, SidebarToggle, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink,
   MenuButton, DarkModeButton, IconButton, Footer,
   COXAUI_REACT_VERSION
 } from '../src/index.js';
@@ -11,7 +11,7 @@ import logo from '../logo.png';
 import { SecInstalacao, SecCores, SecIcones } from './sections/Fundamentos.jsx';
 import {
   SecBotoes, SecBadges, SecAlertas, SecFormularios,
-  SecCards, SecStatCards, SecModal, SecTabs, SecAccordion, SecDropdown, SecAvatar
+  SecCards, SecTabelas, SecStatCards, SecModal, SecTabs, SecAccordion, SecDropdown, SecAvatar
 } from './sections/Componentes.jsx';
 import {
   SecGraficos, SecBreadcrumb, SecFilterPills, SecProgress,
@@ -33,6 +33,7 @@ const TOC = [
       { id: 'alertas', icon: 'alert-circle', label: 'Alertas' },
       { id: 'formularios', icon: 'forms', label: 'Formulários' },
       { id: 'cards', icon: 'layout-cards', label: 'Cards' },
+      { id: 'tabelas', icon: 'table', label: 'Tabelas' },
       { id: 'stat-cards', icon: 'chart-bar', label: 'Stat Cards' },
       { id: 'modal', icon: 'square', label: 'Modal' },
       { id: 'tabs', icon: 'layout-columns', label: 'Abas (Tabs)' },
@@ -100,6 +101,7 @@ export default function App() {
         </SidebarScroll>
         <SidebarFooter portalUrl="#" portalLabel="Voltar ao portal" />
       </Sidebar>
+      <SidebarToggle />
       <Overlay />
       <ContentCol>
         <div className="docs-topbar">
@@ -129,6 +131,7 @@ export default function App() {
             <SecAlertas />
             <SecFormularios />
             <SecCards />
+            <SecTabelas />
             <SecStatCards />
             <SecModal />
             <SecTabs />
@@ -147,8 +150,9 @@ export default function App() {
           </div>
         </div>
         <Footer
-          left="CoxaUI React © 2026 Coritiba SAF"
-          center={`v${COXAUI_REACT_VERSION}`}
+          system="CoxaUI React"
+          version={COXAUI_REACT_VERSION}
+          copyright="© 2026 Coritiba SAF"
           right={<a href="https://github.com/CORITIBA-SAF-TECH/coxa-ui-react" className="ftr-lnk" target="_blank" rel="noreferrer"><i className="ti ti-brand-github" /> GitHub</a>}
         />
       </ContentCol>

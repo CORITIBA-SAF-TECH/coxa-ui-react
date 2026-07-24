@@ -1,7 +1,7 @@
 const VARIANTS = {
   primary: 'btn-p',
   secondary: 'btn-s',
-  danger: 'btn-d',      /* laranja — vermelho é proibido no projeto */
+  danger: 'btn-d',      /* laranja: vermelho é proibido no projeto */
   warning: 'btn-w',
   accent: 'btn-acc',
   ghost: 'btn-ghost'

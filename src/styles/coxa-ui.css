@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════
-   CoxaUI v0.0.5 — Coritiba Foot Ball Club Internal Design System
+   CoxaUI v0.0.5: Coritiba Foot Ball Club Internal Design System
    Baseado nos projetos DocumentaCoxa e PortariaCoxa
    ══════════════════════════════════════════════════════════════════ */
 
@@ -15,7 +15,7 @@
   --accent:     #fad716;
   --accent-dk:  #e6c010;
 
-  /* Header / Footer — offwhite (sidebar segue verde) */
+  /* Header / Footer: offwhite (sidebar segue verde) */
   --hdr-bg:    #f4f3ef;
   --hdr-text:  #1a1a1a;
   --hdr-muted: #6b7280;
@@ -172,7 +172,8 @@ i.ti { font-size: 1.05em; line-height: 1; vertical-align: -2px; }
   transition: width .22s cubic-bezier(.4,0,.2,1), min-width .22s cubic-bezier(.4,0,.2,1);
 }
 .sidebar.collapsed { width: 100px; min-width: 100px; }
-.sidebar.collapsed .sb-brand    { padding: 16px 6px 12px; }
+/* Marca desce para dar espaço ao botão flutuante no topo (com divisória e folga) */
+.sidebar.collapsed .sb-brand    { margin-top: 58px; border-top: 1px solid rgba(255,255,255,.14); padding: 14px 6px 10px; }
 .sidebar.collapsed .sb-brand-lnk { gap: 0; }
 .sidebar.collapsed .sb-brand img { max-height: 90px; width: auto; }
 .sidebar.collapsed .sb-brand-txt { display: none; }
@@ -184,8 +185,7 @@ i.ti { font-size: 1.05em; line-height: 1; vertical-align: -2px; }
 .sidebar.collapsed .sb-home     { justify-content: center; padding: 7px; margin: 2px 6px; }
 .sidebar.collapsed .sb-home span { display: none; }
 
-/* Rodapé da sidebar: dois botões empilhados sempre na base
-   (voltar ao portal acima, recolher/expandir abaixo) */
+/* Rodapé da sidebar: botão "voltar ao portal" fixo na base */
 .sb-footer {
   flex-shrink: 0;
   border-top: 1px solid rgba(255,255,255,.14);
@@ -207,7 +207,7 @@ i.ti { font-size: 1.05em; line-height: 1; vertical-align: -2px; }
   border-color: rgba(255,255,255,.4); text-decoration: none !important;
 }
 .sb-foot-btn i.ti { font-size: 1.15rem; flex-shrink: 0; }
-/* Voltar ao portal — branco como o recolher, porém um pouco mais opaco (leve destaque) */
+/* Voltar ao portal: branco, um pouco mais opaco (leve destaque) */
 .sb-foot-back {
   background: rgba(255,255,255,.16);
   border-color: rgba(255,255,255,.3);
@@ -216,14 +216,32 @@ i.ti { font-size: 1.05em; line-height: 1; vertical-align: -2px; }
   background: rgba(255,255,255,.24);
   border-color: rgba(255,255,255,.5);
 }
-.sb-foot-toggle i { transition: transform .22s cubic-bezier(.4,0,.2,1); }
 .sidebar.collapsed .sb-footer   { padding: 8px 6px; }
 .sidebar.collapsed .sb-foot-btn { justify-content: center; padding: 10px 0; gap: 0; }
 .sidebar.collapsed .sb-foot-btn span { display: none; }
-.sidebar.collapsed .sb-foot-toggle i { transform: rotate(180deg); }
+
+/* Botão recolher/expandir: círculo flutuante na borda (igual ao CoxaUI vanilla) */
+.sb-toggle-btn {
+  position: absolute;
+  left: 255px; top: 29px;
+  transform: translate(-50%, -50%);
+  width: 32px; height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  box-shadow: 0 1px 5px rgba(0,0,0,.22);
+  cursor: pointer; color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .84rem; z-index: 450;
+  transition: left .22s cubic-bezier(.4,0,.2,1), background .15s, color .15s, border-color .15s;
+}
+.sb-toggle-btn:hover { background: var(--accent); border-color: var(--accent); color: var(--sb-dark); }
+.sb-toggle-btn i { transition: transform .22s cubic-bezier(.4,0,.2,1); }
+.sidebar.collapsed + .sb-toggle-btn { left: 50px; }
+.sidebar.collapsed + .sb-toggle-btn i { transform: rotate(180deg); }
 
 /* Tooltip flutuante da sidebar recolhida (elemento injetado via JS
-   com position:fixed — não é cortado pelo overflow do .sb-scroll) */
+   com position:fixed: não é cortado pelo overflow do .sb-scroll) */
 .sb-tooltip {
   position: fixed;
   transform: translateY(-50%);
@@ -308,7 +326,7 @@ i.ti { font-size: 1.05em; line-height: 1; vertical-align: -2px; }
 }
 .sb-search button:hover { color: #fff; }
 
-/* Sidebar nav — portaria style (simple links) */
+/* Sidebar nav: portaria style (simple links) */
 .sb-nav { padding: 10px 0 0; }
 .sb-grp-lbl {
   font-size: .65rem; font-weight: 700; text-transform: uppercase;
@@ -333,7 +351,7 @@ i.ti { font-size: 1.05em; line-height: 1; vertical-align: -2px; }
 }
 .sb-lnk.active .sb-badge { background: var(--sb-dark); color: var(--accent); }
 
-/* Sidebar nav — documenta style (sections/accordion) */
+/* Sidebar nav: documenta style (sections/accordion) */
 .sb-home {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 14px; font-size: .9rem; color: #fff;
@@ -556,7 +574,7 @@ select {
 }
 select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-lt); }
 
-/* Combobox — select com busca (input + lista filtrável).
+/* Combobox: select com busca (input + lista filtrável).
    Inicializado automaticamente pelo coxa-ui.js (initCombos) */
 .combo { position: relative; width: 100%; }
 .combo .combo-input { padding-right: 32px; }
@@ -586,7 +604,7 @@ select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary
 html.dark .combo-opt:hover, html.dark .combo-opt.hl { color: #6ee7b7; }
 .combo-empty { padding: 10px; font-size: .82rem; color: var(--text3); text-align: center; display: none; }
 
-/* Multi-combobox — combobox com seleção múltipla (chips) */
+/* Multi-combobox: combobox com seleção múltipla (chips) */
 .combo-multi .combo-control {
   display: flex; flex-wrap: wrap; align-items: center; gap: 5px;
   width: 100%; min-height: 38px; padding: 4px 32px 4px 6px;
@@ -1163,7 +1181,7 @@ html.dark .post-content h3, html.dark .post-content h4 { color: #6ee7b7; }
 .post-content a  { color: var(--primary); text-decoration: underline; }
 html.dark .post-content a { color: #6ee7b7; }
 .post-content img { max-width: 100% !important; height: auto !important; border-radius: 6px; margin: .8em 0; display: block; }
-/* Inline code — global */
+/* Inline code: global */
 code { background: var(--surface2); padding: 1px 6px; border-radius: 4px; font-size: .88em; font-family: var(--font-mono); color: var(--text2); }
 html.dark code { background: rgba(255,255,255,.1); color: #a5f3fc; }
 td code, th code { font-size: .82em; }
@@ -1317,6 +1335,7 @@ html.dark .bpmn-canvas { background: var(--surface2); }
 /* ── 37. Mobile responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
   .menu-btn { display: flex; }
+  .sb-toggle-btn { display: none; }
   .sidebar {
     position: fixed; top: 0; left: -268px; width: 268px; min-width: 268px;
     height: 100%; z-index: 350;
@@ -1327,6 +1346,7 @@ html.dark .bpmn-canvas { background: var(--surface2); }
   /* No mobile a sidebar é um drawer: ignora o estado "collapsed"
      (largura cheia + textos visíveis, botões alinhados à esquerda) */
   .sidebar.collapsed { width: 268px; min-width: 268px; }
+  .sidebar.collapsed .sb-brand { margin-top: 0; border-top: none; padding: 18px 14px 14px; }
   .sidebar.collapsed .sb-brand-txt { display: flex; }
   .sidebar.collapsed .sb-grp-lbl { display: block; }
   .sidebar.collapsed .sb-lnk span,
@@ -1336,7 +1356,6 @@ html.dark .bpmn-canvas { background: var(--surface2); }
   .sidebar.collapsed .sb-lnk    { justify-content: flex-start; gap: 9px; padding: 10px 14px; margin: 2px 8px 5px; }
   .sidebar.collapsed .sb-home   { justify-content: flex-start; padding: 10px 14px; margin: 2px 8px; }
   .sidebar.collapsed .sb-foot-btn { justify-content: flex-start; gap: 9px; padding: 9px 12px; }
-  .sidebar.collapsed .sb-foot-toggle i { transform: none; }
   .sb-hdr { display: flex; }
   .main { padding: 14px 13px 44px; }
   .form-row, .form-row-ts, .form-row-3 { grid-template-columns: 1fr; }

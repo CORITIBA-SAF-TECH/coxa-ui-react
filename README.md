@@ -26,7 +26,7 @@ Os ícones **Tabler Icons v3** são carregados automaticamente pelo CSS. O **Cha
 import 'coxa-ui-react/style.css';
 import {
   AppLayout, ContentCol, Overlay, Main,
-  Sidebar, SidebarToggle, SidebarHeader, SidebarBrand,
+  Sidebar, SidebarToggle, SidebarFooter, SidebarHeader, SidebarBrand,
   SidebarScroll, SidebarGroup, SidebarLink,
   Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, Footer
 } from 'coxa-ui-react';
@@ -43,6 +43,7 @@ export default function App() {
           <SidebarGroup>Operações</SidebarGroup>
           <SidebarLink icon="login" label="Registrar Entrada" href="/entrada" />
         </SidebarScroll>
+        <SidebarFooter portalUrl="https://seu-portal" portalLabel="Voltar ao portal" />
       </Sidebar>
       <SidebarToggle />
       <Overlay />
@@ -66,12 +67,13 @@ O comportamento é o mesmo do CoxaUI: sidebar recolhida por padrão no desktop (
 
 | Grupo | Componentes |
 |---|---|
-| **Layout** | `AppLayout`, `ContentCol`, `Main`, `Overlay`, `Sidebar`, `SidebarToggle`, `SidebarHeader`, `SidebarBrand`, `SidebarScroll`, `SidebarGroup`, `SidebarLink`, `Header`, `MenuButton`, `HeaderPage`, `HeaderRight`, `DarkModeButton`, `LiveClock`, `Footer` |
+| **Layout** | `AppLayout`, `ContentCol`, `Main`, `Overlay`, `Sidebar`, `SidebarToggle`, `SidebarFooter`, `SidebarHeader`, `SidebarBrand`, `SidebarScroll`, `SidebarGroup`, `SidebarLink`, `Header`, `MenuButton`, `HeaderPage`, `HeaderRight`, `DarkModeButton`, `LiveClock`, `Footer` |
 | **Botões** | `Button` (variant: `primary`, `secondary`, `danger`, `warning`, `accent`, `ghost`; size: `xs`, `sm`, `lg`), `ButtonGroup`, `IconButton` |
 | **Badges** | `Badge` (color: `green`, `blue`, `orange`, `purple`, `red`, `yellow`, `gray`, `primary`, `accent`), `BadgeInside`, `BadgeOutside`, `Tag`, `TagCloud` |
 | **Alertas** | `Alert` (type: `info`, `success`, `warn`, `danger`) |
 | **Cards** | `Cards`, `CardItem`, `AdmCard`, `LinkCards`, `LinkCard`, `StatCards`, `StatCard` |
-| **Formulários** | `FormCard`, `FormRow`, `FormGroup`, `FormActions`, `Toggle`, `ChkOpt`, `TipoOpts`, `TipoOpt`, `Combobox` |
+| **Tabelas** | `TableWrap`, `Table`, `SelBar` (seleção em lote); classes de linha `.row-pend`, `.row-del` |
+| **Formulários** | `FormCard`, `FormRow`, `FormGroup`, `FormActions`, `Toggle`, `ChkOpt`, `TipoOpts`, `TipoOpt`, `Combobox`, `MultiCombobox`, `<textarea>` (estilizado) |
 | **Interativos** | `Modal` (size: `xs`, `sm`, `lg`, `xl`, `full`), `ModalInfo`, `Tabs`, `TabPanel`, `LinksTabs`, `LinksPanel`, `Accordion`, `AccordionItem`, `Dropdown`, `DropdownItem`, `DropdownSep` |
 | **Padrões** | `Timeline`, `TimelineItem`, `Hist`, `HistItem`, `Steps`, `Breadcrumb`, `FilterPills`, `FilterPill`, `Progress`, `Empty`, `Spinner`, `Avatar`, `AvatarGroup`, `KVList`, `KV`, `KVDivider` |
 | **Gráficos** | `CoxaChart` (Chart.js v4, paleta em variações do verde primary, tema claro/escuro automático), `COXA_CHART_COLORS` |
@@ -130,14 +132,24 @@ npm run build   # gera dist/ (lib ES + UMD + CSS)
 
 ## Changelog
 
+> **Atualizando da 0.1.0?** Veja o [guia de migração](MIGRACAO.md): a 1.0.0 é compatível com a 0.1.0 (sem quebra de código); as mudanças são visuais e recursos novos opcionais.
+
+### v1.0.1
+
+- **Tabelas**: novo padrão com `TableWrap`, `Table` e `SelBar` (seleção em lote), com classes de linha `.row-pend` / `.row-del`
+- **Dropdown**: menu renderizado em portal (`position: fixed`) — não é mais cortado por containers com `overflow` (ex.: tabelas); sobe automaticamente se faltar espaço abaixo e reposiciona ao rolar
+- **Footer**: padrão de três zonas via props `system` + `version` (esquerda), `copyright` (centro) e `right` (livre)
+- Ajustes da sidebar recolhida (folga entre o botão e a divisória; botão alinhado à altura do header)
+- Remoção do caractere "—" em todo o projeto
+
 ### v1.0.0
 
 Primeira versão estável.
 
-- **Layout**: cabeçalho e rodapé offwhite (superfície escura no dark mode); sidebar verde, recolhida por padrão no desktop (100px) com scrollbar oculta mas rolável
-- **Sidebar**: `SidebarFooter` com dois botões fixos na base — voltar ao portal (branco em leve destaque) e recolher/expandir; no mobile os botões e links mostram texto (drawer). Substitui o antigo `SidebarToggle`
+- **Layout**: cabeçalho e rodapé offwhite (superfície escura no dark mode); sidebar verde, recolhida por padrão no desktop (100px, logo 90px) com scrollbar oculta mas rolável; ícones da nav em 20px
+- **Sidebar**: `SidebarToggle` (círculo flutuante na borda, igual ao CoxaUI vanilla) para recolher/expandir; novo `SidebarFooter` opcional com o botão "voltar ao portal" fixo na base; no mobile os links e botões mostram texto (drawer)
 - **Formulários**: `<textarea>` estilizado automaticamente; `Combobox` (select com busca) e `MultiCombobox` (seleção múltipla com chips)
-- **Componentes**: botões (`xs`–`lg`), badges, alertas, cards, stat cards, modal com tamanhos, tabs, accordion, dropdown, timeline, steps, gráficos (Chart.js, paleta em variações do verde primary)
+- **Componentes**: botões (tamanhos `xs` a `lg`), badges, alertas, cards, stat cards, modal com tamanhos, tabs, accordion, dropdown, timeline, steps, gráficos (Chart.js, paleta em variações do verde primary)
 - **Utilitários**: `useDarkMode`, `useSidebar`, `coxaToast`, `coxaConfirm`
 - CSS base compartilhado com o CoxaUI vanilla; chaves de `localStorage` compatíveis (`coxaui-dark`, `coxaui-sb`)
 - `llms.txt` com orientações para gerar código com IA (publicado no pacote e servido em `/llms.txt` no playground)

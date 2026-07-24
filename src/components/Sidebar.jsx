@@ -15,15 +15,20 @@ export function Sidebar({ children, className = '', ...rest }) {
   return <aside id="sidebar" className={cls} {...rest}>{children}</aside>;
 }
 
-/* Rodapé da sidebar: dois botões empilhados sempre na base.
-   Acima: voltar ao portal. Abaixo: recolher/expandir a sidebar.
+/* Botão recolher/expandir: círculo flutuante na borda (igual ao CoxaUI vanilla).
+   Irmão direto da <Sidebar>, logo após ela. */
+export function SidebarToggle({ title = 'Recolher menu' }) {
+  const sb = useSidebar();
+  return (
+    <button className="sb-toggle-btn" onClick={sb?.toggle} title={title} type="button">
+      <i className="ti ti-chevron-left" />
+    </button>
+  );
+}
+
+/* Rodapé da sidebar: botão "voltar ao portal" fixo na base.
    Deve ficar DENTRO da <Sidebar>, após o <SidebarScroll>. */
-export function SidebarFooter({
-  portalUrl = '#',
-  portalLabel = 'Voltar ao portal',
-  onPortalClick,
-  toggleLabel
-}) {
+export function SidebarFooter({ portalUrl = '#', portalLabel = 'Voltar ao portal', onPortalClick }) {
   const sb = useSidebar();
   const collapsed = sb?.collapsed;
   return (
@@ -31,14 +36,6 @@ export function SidebarFooter({
       <a className="sb-foot-btn sb-foot-back" href={portalUrl} onClick={onPortalClick} title={collapsed ? portalLabel : undefined}>
         <i className="ti ti-arrow-back-up" /><span>{portalLabel}</span>
       </a>
-      <button
-        className="sb-foot-btn sb-foot-toggle"
-        type="button"
-        onClick={sb?.toggle}
-        title={toggleLabel || (collapsed ? 'Expandir menu' : 'Recolher menu')}
-      >
-        <i className="ti ti-chevrons-left" /><span>Recolher menu</span>
-      </button>
     </div>
   );
 }
@@ -79,7 +76,7 @@ export function SidebarGroup({ children }) {
 }
 
 /* Link de navegação. Com a sidebar recolhida, mostra tooltip flutuante
-   no hover (portal no body — não é cortado pelo overflow). */
+   no hover (portal no body: não é cortado pelo overflow). */
 export function SidebarLink({ icon, label, badge, active, href = '#', onClick, ...rest }) {
   const sb = useSidebar();
   const ref = useRef(null);

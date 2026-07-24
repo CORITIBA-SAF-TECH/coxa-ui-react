@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
-/* Paleta oficial dos gráficos — todas variações do verde primary,
+/* Paleta oficial dos gráficos: todas variações do verde primary,
    alternando tons escuros e claros para contraste (nunca vermelho). */
 export const COXA_CHART_COLORS = [
   '#006B3C', /* verde Coritiba (primary) */

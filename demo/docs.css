@@ -1,4 +1,4 @@
-/* Estilos da página de documentação — portados do index.html do coxa-ui */
+/* Estilos da página de documentação: portados do index.html do coxa-ui */
 
 .docs-main {
   flex: 1;
@@ -14,7 +14,7 @@
   z-index: 100;
   background: var(--hdr-bg);
   padding: 0 28px;
-  min-height: 52px;
+  min-height: 58px;   /* igual ao header da lib, p/ o botão da sidebar centralizar */
   display: flex;
   align-items: center;
   justify-content: space-between;

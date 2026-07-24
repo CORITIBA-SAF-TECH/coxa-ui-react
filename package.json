@@ -1,6 +1,6 @@
 {
   "name": "coxa-ui-react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Componentes React do CoxaUI para padronização dos projetos web do Coritiba SAF",
   "type": "module",
   "main": "./dist/coxa-ui-react.umd.cjs",
@@ -16,7 +16,8 @@
     "dist",
     "logo.png",
     "ogimage.png",
-    "llms.txt"
+    "llms.txt",
+    "MIGRACAO.md"
   ],
   "sideEffects": [
     "**/*.css"
@@ -36,7 +37,7 @@
     "coritiba-saf",
     "coxa-ui"
   ],
-  "author": "Coritiba Foot Ball Club — SAF",
+  "author": "Coritiba Foot Ball Club (SAF)",
   "license": "ISC",
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-# CoxaUI React — Guia de uso para IA
+# CoxaUI React: Guia de uso para IA
 
 Este arquivo orienta assistentes de IA (Claude, Copilot, etc.) a construir aplicações React usando o **coxa-ui-react**, o design system do Coritiba Foot Ball Club (SAF). Leia por completo antes de gerar código.
 
@@ -17,7 +17,7 @@ npm install coxa-ui-react react react-dom
 ```
 
 ```jsx
-// main.jsx / index.jsx — uma vez só
+// main.jsx / index.jsx: uma vez só
 import 'coxa-ui-react/style.css';
 ```
 
@@ -27,7 +27,7 @@ import 'coxa-ui-react/style.css';
 import 'coxa-ui-react/style.css';
 import {
   AppLayout, ContentCol, Overlay, Main,
-  Sidebar, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, SidebarFooter,
+  Sidebar, SidebarToggle, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, SidebarFooter,
   Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, Footer
 } from 'coxa-ui-react';
 import logo from './logo.png';
@@ -46,6 +46,7 @@ export default function App() {
         </SidebarScroll>
         <SidebarFooter portalUrl="https://portal.exemplo" portalLabel="Voltar ao portal" />
       </Sidebar>
+      <SidebarToggle />   {/* botão circular flutuante recolher/expandir: irmão da Sidebar */}
       <Overlay />
       <ContentCol>
         <Header>
@@ -62,8 +63,9 @@ export default function App() {
 ```
 
 **Estrutura obrigatória do layout:**
-- `<AppLayout>` é a raiz (flex row). Dentro: `<Sidebar>`, `<Overlay>` e `<ContentCol>`.
-- `<SidebarFooter>` fica **dentro** de `<Sidebar>`, depois do `<SidebarScroll>` — ele já renderiza os dois botões da base (voltar ao portal + recolher/expandir).
+- `<AppLayout>` é a raiz (flex row). Dentro: `<Sidebar>`, `<SidebarToggle>`, `<Overlay>` e `<ContentCol>`.
+- `<SidebarToggle>` é o botão circular flutuante (recolher/expandir), irmão direto da `<Sidebar>` (logo após ela).
+- `<SidebarFooter>` (opcional) fica **dentro** de `<Sidebar>`, depois do `<SidebarScroll>`: renderiza o botão "voltar ao portal" fixo na base.
 - `<ContentCol>` contém `<Header>`, `<Main>` e `<Footer>`, nessa ordem.
 - A sidebar inicia **recolhida** no desktop; a preferência (recolhida/aberta) e o modo escuro persistem em `localStorage` (chaves `coxaui-sb` e `coxaui-dark`, compartilhadas com o CoxaUI vanilla).
 
@@ -109,6 +111,43 @@ export default function App() {
 <LinkCards><LinkCard icon="mail" href="…">E-mail</LinkCard></LinkCards>
 ```
 
+### Tabelas
+```jsx
+// Use <table>/<thead>/<tbody>/<tr>/<th>/<td> normais dentro de <TableWrap>.
+// A seleção é estado do app (nada de estado global). Linhas: .row-pend | .row-del.
+const [sel, setSel] = useState([]);
+const toggle = id => setSel(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
+
+<TableWrap>
+  <Table>
+    <thead><tr><th>...</th></tr></thead>
+    <tbody>
+      {rows.map(r => (
+        <tr key={r.id} className={r.pend ? 'row-pend' : ''}>
+          <td className="sel-chk-cell">
+            <input type="checkbox" className="sel-chk" checked={sel.includes(r.id)} onChange={() => toggle(r.id)} />
+          </td>
+          <td><strong>{r.nome}</strong></td>
+          <td><span className="badge-loc">{r.loc}</span></td>
+          <td>
+            <Dropdown label="" icon="dots-vertical">
+              <DropdownItem icon="eye">Ver</DropdownItem>
+              <DropdownItem icon="trash" danger>Excluir</DropdownItem>
+            </Dropdown>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </Table>
+</TableWrap>
+// Barra de seleção em lote (renderize só quando houver seleção — o componente já cuida disso):
+<SelBar count={sel.length} onClear={() => setSel([])}>
+  <Button size="sm" variant="accent" icon="logout">Saída em lote</Button>
+</SelBar>
+// Badges de status em células: <BadgeInside /> (presente), <BadgeOutside /> (saiu),
+// <span className="badge-loc">Sede</span>, <span className="status-pend"><i className="ti ti-clock" /> Pendente</span>
+```
+
 ### Formulários
 ```jsx
 <FormCard icon="user-plus" title="Novo Visitante">
@@ -126,7 +165,7 @@ export default function App() {
   </FormActions>
 </FormCard>
 
-// Inputs nativos (input, select, textarea) já herdam o estilo — não precisa classe.
+// Inputs nativos (input, select, textarea) já herdam o estilo: não precisa classe.
 // <textarea rows={4} placeholder="..." />  → estilizado automaticamente, redimensiona na vertical.
 <Toggle checked={x} onChange={setX} label="Notificações" />
 <ChkOpt checked={x} onChange={setX}>Autorizado</ChkOpt>
@@ -143,7 +182,7 @@ const [depto, setDepto] = useState('');
   value={depto} onChange={setDepto} name="departamento" />
 // options: string[] ou { label, value }[]. name → gera input hidden p/ forms.
 
-// Seleção múltipla — as escolhas viram chips removíveis; value é um array:
+// Seleção múltipla: as escolhas viram chips removíveis; value é um array:
 const [tags, setTags] = useState([]);
 <MultiCombobox options={['financeiro','rh','ti']} value={tags} onChange={setTags} name="tags" />
 ```
@@ -222,17 +261,17 @@ if (ok) { /* … */ }
 
 ## Erros comuns a evitar
 
-- ❌ Usar `SidebarToggle` (não existe mais) — use `<SidebarFooter />` dentro da `<Sidebar>`.
-- ❌ Esquecer de importar `coxa-ui-react/style.css` — sem ele nada tem estilo.
-- ❌ Colocar `<SidebarFooter>` fora da `<Sidebar>` — ele precisa estar dentro, após o `<SidebarScroll>`.
+- ❌ Esquecer o `<SidebarToggle />` após a `<Sidebar>`: sem ele não há botão de recolher/expandir no desktop.
+- ❌ Esquecer de importar `coxa-ui-react/style.css`: sem ele nada tem estilo.
+- ❌ Colocar `<SidebarFooter>` fora da `<Sidebar>`: ele precisa estar dentro, após o `<SidebarScroll>`.
 - ❌ Definir cores manuais nos gráficos ou usar vermelho em qualquer lugar.
 - ❌ Recriar layout com `<div>` e CSS próprio quando já há `AppLayout`/`ContentCol`/`Header`/`Footer`.
 - ❌ Usar `Modal` sem controlar `open`/`onClose` (ele é controlado, não gerencia estado interno).
 
 ## Referência rápida de exports
 
-Layout: `AppLayout, ContentCol, Main, Overlay, Sidebar, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, LiveClock, Footer`
-Componentes: `Button, ButtonGroup, IconButton, Badge, BadgeInside, BadgeOutside, Tag, TagCloud, Alert, Spinner, Avatar, AvatarGroup, Breadcrumb, FilterPills, FilterPill, Progress, Empty, KVList, KV, KVDivider, Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard`
+Layout: `AppLayout, ContentCol, Main, Overlay, Sidebar, SidebarToggle, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, LiveClock, Footer`
+Componentes: `Button, ButtonGroup, IconButton, Badge, BadgeInside, BadgeOutside, Tag, TagCloud, Alert, Spinner, Avatar, AvatarGroup, Breadcrumb, FilterPills, FilterPill, Progress, Empty, KVList, KV, KVDivider, Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard, TableWrap, Table, SelBar`
 Formulários: `FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox`
 Interativos: `Modal, ModalInfo, Tabs, TabPanel, LinksTabs, LinksPanel, Accordion, AccordionItem, Dropdown, DropdownItem, DropdownSep`
 Padrões: `Timeline, TimelineItem, Hist, HistItem, Steps`

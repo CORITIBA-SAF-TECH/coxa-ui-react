@@ -16,7 +16,7 @@ export function coxaToast(icon, title) {
   }));
 }
 
-/* Diálogo de confirmação — retorna Promise<boolean> */
+/* Diálogo de confirmação: retorna Promise<boolean> */
 export function coxaConfirm({ title, text, icon = 'warning', confirmText = 'Confirmar', color }) {
   return Swal.fire(swalOpts({
     title, text, icon, showCancelButton: true,

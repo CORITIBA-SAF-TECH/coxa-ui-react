@@ -10,7 +10,7 @@ export function useSidebar() {
 
 /* Container raiz: <AppLayout><Sidebar/><SidebarToggle/><Overlay/><ContentCol/></AppLayout>
    No desktop a sidebar inicia recolhida por padrão; a preferência do usuário
-   fica salva em localStorage ('coxaui-sb' — mesma chave do CoxaUI vanilla). */
+   fica salva em localStorage ('coxaui-sb': mesma chave do CoxaUI vanilla). */
 export function AppLayout({ children, className = '', ...rest }) {
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined' || window.innerWidth <= 768) return false;

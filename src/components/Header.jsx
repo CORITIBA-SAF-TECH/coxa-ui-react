@@ -6,7 +6,7 @@ export function Header({ children, className = '', ...rest }) {
   return <header className={className || undefined} {...rest}>{children}</header>;
 }
 
-/* Botão hambúrguer — visível só no mobile (CSS) */
+/* Botão hambúrguer: visível só no mobile (CSS) */
 export function MenuButton() {
   const sb = useSidebar();
   return (
@@ -54,13 +54,27 @@ export function LiveClock() {
   return <span className="hdr-clock">{p(now.getHours())}:{p(now.getMinutes())}:{p(now.getSeconds())}</span>;
 }
 
-/* Footer com três zonas */
-export function Footer({ left, center, right }) {
+/* Footer padrão de três zonas:
+     ESQUERDA  → nome do sistema + versão  (props system, version)
+     CENTRO    → copyright                 (prop copyright)
+     DIREITA   → livre para o desenvolvedor (prop right)
+   As props left / center permitem sobrescrever as zonas quando necessário. */
+export function Footer({ system, version, copyright, right, left, center }) {
+  let leftZone = left;
+  if (leftZone == null && (system || version)) {
+    leftZone = (
+      <>
+        {system}{system && version ? ' ' : ''}
+        {version && <span data-coxaui-ver>v{version}</span>}
+      </>
+    );
+  }
+  const centerZone = center != null ? center : copyright;
   return (
     <footer>
-      {left && <span className="ftr-l">{left}</span>}
-      {center && <span className="ftr-c">{center}</span>}
-      {right && <span className="ftr-r">{right}</span>}
+      <span className="ftr-l">{leftZone}</span>
+      <span className="ftr-c">{centerZone}</span>
+      <span className="ftr-r">{right}</span>
     </footer>
   );
 }

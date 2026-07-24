@@ -258,10 +258,10 @@ export function SecSpinner() {
 
 export function SecApi() {
   const rows = [
-    ['useDarkMode()', '{ dark, toggle, setDark } — modo escuro persistente (coxaui-dark)'],
-    ['useSidebar()', '{ collapsed, open, toggle, close } — estado da sidebar dentro de AppLayout'],
+    ['useDarkMode()', '{ dark, toggle, setDark }: modo escuro persistente (coxaui-dark)'],
+    ['useSidebar()', '{ collapsed, open, toggle, close }: estado da sidebar dentro de AppLayout'],
     ['coxaToast(icon, msg)', 'Toast padrão via SweetAlert2'],
-    ["coxaConfirm({ title, text, icon, confirmText, color })", 'Confirmação — retorna Promise<boolean>'],
+    ["coxaConfirm({ title, text, icon, confirmText, color })", 'Confirmação: retorna Promise<boolean>'],
     ['COXA_CHART_COLORS', 'Paleta oficial dos gráficos (variações do verde primary)'],
     ['COXAUI_REACT_VERSION', 'Versão da biblioteca']
   ];
