@@ -18,7 +18,7 @@ No entry da aplicação, importe o CSS uma única vez:
 import 'coxa-ui-react/style.css';
 ```
 
-Os ícones **Tabler Icons v3** são carregados automaticamente pelo CSS. O **Chart.js v4** e o **SweetAlert2 v11** já vêm como dependências.
+Os ícones **Tabler Icons v3** são carregados automaticamente pelo CSS. O **Chart.js v4** e o **SweetAlert2 v11** já vêm como dependências. O pacote inclui **tipagens TypeScript** (`index.d.ts`), com autocomplete e checagem de props mesmo em projetos JS.
 
 ## Estrutura básica de página
 
@@ -72,8 +72,9 @@ O comportamento é o mesmo do CoxaUI: sidebar recolhida por padrão no desktop (
 | **Badges** | `Badge` (color: `green`, `blue`, `orange`, `purple`, `red`, `yellow`, `gray`, `primary`, `accent`), `BadgeInside`, `BadgeOutside`, `Tag`, `TagCloud` |
 | **Alertas** | `Alert` (type: `info`, `success`, `warn`, `danger`) |
 | **Cards** | `Cards`, `CardItem`, `AdmCard`, `LinkCards`, `LinkCard`, `StatCards`, `StatCard` |
-| **Tabelas** | `TableWrap`, `Table`, `SelBar` (seleção em lote); classes de linha `.row-pend`, `.row-del` |
-| **Formulários** | `FormCard`, `FormRow`, `FormGroup`, `FormActions`, `Toggle`, `ChkOpt`, `TipoOpts`, `TipoOpt`, `Combobox`, `MultiCombobox`, `<textarea>` (estilizado) |
+| **Tabelas** | `DataTable` (padrão: ordenação, busca, colunas visíveis, exportação CSV com escolha de colunas, paginação). Baixo nível: `TableWrap`, `Table`, `SelBar` (seleção em lote), `SortableTh` + `useSort`, `Pagination`; classes de linha `.row-pend`, `.row-del` |
+| **Feedback** | `Skeleton` (+ `Skeleton.Text`), `Tooltip`, `Drawer` (offcanvas) |
+| **Formulários** | `FormCard`, `FormRow`, `FormGroup`, `FormActions`, `Toggle`, `ChkOpt`, `TipoOpts`, `TipoOpt`, `Combobox`, `MultiCombobox`, `FileUpload` (drag & drop), `<textarea>` (estilizado) |
 | **Interativos** | `Modal` (size: `xs`, `sm`, `lg`, `xl`, `full`), `ModalInfo`, `Tabs`, `TabPanel`, `LinksTabs`, `LinksPanel`, `Accordion`, `AccordionItem`, `Dropdown`, `DropdownItem`, `DropdownSep` |
 | **Padrões** | `Timeline`, `TimelineItem`, `Hist`, `HistItem`, `Steps`, `Breadcrumb`, `FilterPills`, `FilterPill`, `Progress`, `Empty`, `Spinner`, `Avatar`, `AvatarGroup`, `KVList`, `KV`, `KVDivider` |
 | **Gráficos** | `CoxaChart` (Chart.js v4, paleta em variações do verde primary, tema claro/escuro automático), `COXA_CHART_COLORS` |
@@ -132,15 +133,23 @@ npm run build   # gera dist/ (lib ES + UMD + CSS)
 
 ## Changelog
 
-> **Atualizando da 0.1.0?** Veja o [guia de migração](MIGRACAO.md): a 1.0.0 é compatível com a 0.1.0 (sem quebra de código); as mudanças são visuais e recursos novos opcionais.
+> **Atualizando da 0.1.0?** Veja o [guia de migração](MIGRACAO.md): a 1.x é compatível com a 0.1.0 (sem quebra de código); as mudanças são visuais e recursos novos opcionais.
+
+### v1.1.0
+
+- **Tipagens TypeScript** (`index.d.ts`): autocomplete e checagem de props para todos os componentes, hooks e utils
+- **Acessibilidade**: `Modal` e `Drawer` com Esc + focus trap (via `useOverlay`); `Dropdown` com navegação por teclado e ARIA; `Tabs`/`Accordion` com roles ARIA; anéis de `:focus-visible`
+- **`DataTable`**: tabela padrão com ordenação, busca, seleção de colunas visíveis, exportação CSV (escolhendo as colunas) e paginação já embutidas
+- **Novos componentes**: `Drawer` (offcanvas), `Pagination`, `SortableTh` + `useSort` (ordenação), `Skeleton` (+ `Skeleton.Text`), `Tooltip`, `FileUpload` (drag & drop), `UserMenu` (menu de conta no header)
+- `Button` e `IconButton` agora encaminham `ref` (`forwardRef`) e `Button` aceita `as` (ex.: `as={Link}`)
 
 ### v1.0.1
 
 - **Tabelas**: novo padrão com `TableWrap`, `Table` e `SelBar` (seleção em lote), com classes de linha `.row-pend` / `.row-del`
-- **Dropdown**: menu renderizado em portal (`position: fixed`) — não é mais cortado por containers com `overflow` (ex.: tabelas); sobe automaticamente se faltar espaço abaixo e reposiciona ao rolar
+- **Dropdown**: menu renderizado em portal (`position: fixed`): não é mais cortado por containers com `overflow` (ex.: tabelas); sobe automaticamente se faltar espaço abaixo e reposiciona ao rolar
 - **Footer**: padrão de três zonas via props `system` + `version` (esquerda), `copyright` (centro) e `right` (livre)
 - Ajustes da sidebar recolhida (folga entre o botão e a divisória; botão alinhado à altura do header)
-- Remoção do caractere "—" em todo o projeto
+- Remoção do travessão (em dash) em todo o projeto
 
 ### v1.0.0
 

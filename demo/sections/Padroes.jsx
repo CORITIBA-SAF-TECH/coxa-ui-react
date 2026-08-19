@@ -260,6 +260,8 @@ export function SecApi() {
   const rows = [
     ['useDarkMode()', '{ dark, toggle, setDark }: modo escuro persistente (coxaui-dark)'],
     ['useSidebar()', '{ collapsed, open, toggle, close }: estado da sidebar dentro de AppLayout'],
+    ['useSort(data, campo?, dir?)', '{ rows, sort, toggle }: ordenação de tabela (use com SortableTh)'],
+    ['useOverlay(open, onClose)', 'Esc + focus trap + lock de scroll (base de Modal e Drawer)'],
     ['coxaToast(icon, msg)', 'Toast padrão via SweetAlert2'],
     ["coxaConfirm({ title, text, icon, confirmText, color })", 'Confirmação: retorna Promise<boolean>'],
     ['COXA_CHART_COLORS', 'Paleta oficial dos gráficos (variações do verde primary)'],

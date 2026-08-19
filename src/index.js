@@ -3,7 +3,7 @@
    ══════════════════════════════════════════════════════════════════ */
 import './styles/coxa-ui.css';
 
-export const COXAUI_REACT_VERSION = '1.0.1';
+export const COXAUI_REACT_VERSION = '1.1.0';
 
 /* Layout */
 export { AppLayout, ContentCol, Overlay, Main, useSidebar } from './components/AppLayout.jsx';
@@ -27,7 +27,11 @@ export {
 export {
   StatCards, StatCard, Cards, CardItem, AdmCard, LinkCards, LinkCard
 } from './components/Cards.jsx';
-export { TableWrap, Table, SelBar } from './components/Table.jsx';
+export { TableWrap, Table, SelBar, useSort, SortableTh } from './components/Table.jsx';
+export { DataTable } from './components/DataTable.jsx';
+export { Pagination } from './components/Pagination.jsx';
+export { Skeleton } from './components/Skeleton.jsx';
+export { Tooltip } from './components/Tooltip.jsx';
 
 /* Formulários */
 export {
@@ -35,12 +39,15 @@ export {
   Toggle, ChkOpt, TipoOpts, TipoOpt
 } from './components/Form.jsx';
 export { Combobox, MultiCombobox } from './components/Combobox.jsx';
+export { FileUpload } from './components/FileUpload.jsx';
 
 /* Interativos */
 export { Modal, ModalInfo } from './components/Modal.jsx';
+export { Drawer } from './components/Drawer.jsx';
 export { Tabs, TabPanel, LinksTabs, LinksPanel } from './components/Tabs.jsx';
 export { Accordion, AccordionItem } from './components/Accordion.jsx';
 export { Dropdown, DropdownItem, DropdownSep } from './components/Dropdown.jsx';
+export { UserMenu } from './components/UserMenu.jsx';
 export { Timeline, TimelineItem, Hist, HistItem, Steps } from './components/Timeline.jsx';
 
 /* Gráficos */
@@ -48,4 +55,5 @@ export { CoxaChart, COXA_CHART_COLORS } from './components/CoxaChart.jsx';
 
 /* Hooks e utils */
 export { useDarkMode } from './hooks/useDarkMode.js';
+export { useOverlay } from './hooks/useOverlay.js';
 export { coxaToast, coxaConfirm } from './utils/swal.js';

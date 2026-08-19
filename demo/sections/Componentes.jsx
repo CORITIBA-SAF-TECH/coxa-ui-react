@@ -4,7 +4,7 @@ import {
   Badge, BadgeInside, BadgeOutside, Tag, TagCloud,
   Alert, Avatar, AvatarGroup,
   Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard,
-  TableWrap, Table, SelBar,
+  TableWrap, Table, SelBar, DataTable,
   FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox,
   Modal, ModalInfo, Tabs, TabPanel,
   Accordion, AccordionItem,
@@ -325,115 +325,132 @@ const TBL_ROWS = [
   { id: 4, nome: 'Carlos Pereira', loc: 'Estádio', status: 'outside', del: true }
 ];
 
+const DT_DATA = Array.from({ length: 14 }).map((_, i) => ({
+  id: i + 1,
+  nome: ['João Silva', 'Maria Oliveira', 'Ana Souza', 'Carlos Pereira', 'Bruno Lima', 'Elisa Rocha', 'Fábio Costa', 'Gabriela Dias'][i % 8],
+  loc: ['Sede', 'CT', 'Estádio'][i % 3],
+  tipo: ['Fornecedor', 'Terceirizado', 'Visitante'][i % 3],
+  visitas: (i * 5 % 30) + 1
+}));
+const DT_COLS = [
+  { key: 'nome', label: 'Nome', render: r => <strong>{r.nome}</strong> },
+  { key: 'loc', label: 'Localidade', render: r => <span className="badge-loc">{r.loc}</span>, exportValue: r => r.loc },
+  { key: 'tipo', label: 'Tipo' },
+  { key: 'visitas', label: 'Visitas' }
+];
+
 export function SecTabelas() {
-  const [q, setQ] = useState('');
   const [sel, setSel] = useState([]);
-
   const selectable = TBL_ROWS.filter(r => !r.del);
-  const visiveis = TBL_ROWS.filter(r => r.nome.toLowerCase().includes(q.toLowerCase()));
   const allChecked = selectable.length > 0 && selectable.every(r => sel.includes(r.id));
-
   const toggle = id => setSel(s => (s.includes(id) ? s.filter(x => x !== id) : [...s, id]));
   const toggleAll = () => setSel(allChecked ? [] : selectable.map(r => r.id));
 
   return (
     <DocsSection id="tabelas" icon="table" title="Tabelas"
-      desc="Use elementos <table> normais dentro de <TableWrap> — o CSS já estiliza. Linhas: .row-pend (pendente), .row-del (desabilitada). Seleção em lote com <SelBar>.">
-      <Demo code={`import { TableWrap, Table, SelBar, Dropdown, DropdownItem, DropdownSep, BadgeInside } from 'coxa-ui-react';
+      desc="DataTable é o padrão: ordenação, busca, colunas visíveis, exportação CSV (com escolha de colunas) e paginação já embutidas. Para casos específicos, componha manualmente com TableWrap/Table.">
+      <SubSection title="Padrão: DataTable">
+        <p style={{ margin: '4px 0 10px', fontSize: '.84rem', color: 'var(--text2)' }}>
+          Clique no cabeçalho para ordenar; use o menu <strong>Colunas</strong> para mostrar/ocultar e
+          <strong> Exportar CSV</strong> para escolher as colunas e baixar. Tudo padrão, sem configurar.
+        </p>
+        <Demo code={`import { DataTable } from 'coxa-ui-react';
 
-const [sel, setSel] = useState([]);
+const columns = [
+  { key: 'nome', label: 'Nome', render: r => <strong>{r.nome}</strong> },
+  { key: 'loc', label: 'Localidade', render: r => <span className="badge-loc">{r.loc}</span> },
+  { key: 'tipo', label: 'Tipo' },
+  { key: 'visitas', label: 'Visitas' },
+];
+
+<DataTable columns={columns} data={rows} perPage={6} searchable exportName="visitantes.csv" />
+// por coluna: sortable={false}, exportable={false}, render/sortValue/exportValue`}>
+          <DataTable columns={DT_COLS} data={DT_DATA} perPage={6} searchable exportName="visitantes.csv" />
+        </Demo>
+      </SubSection>
+
+      <SubSection title="Composição manual (seleção em lote)">
+        <p style={{ margin: '4px 0 10px', fontSize: '.84rem', color: 'var(--text2)' }}>
+          Para seleção em lote, ações por linha e linhas com destaque (<code>.row-pend</code> / <code>.row-del</code>),
+          monte a tabela com <code>TableWrap</code>/<code>Table</code> e use <code>SelBar</code>.
+        </p>
+        <Demo code={`const [sel, setSel] = useState([]);
 const toggle = id => setSel(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
-
-<input type="text" placeholder="Filtrar tabela..." value={q} onChange={e => setQ(e.target.value)} />
 
 <TableWrap>
   <Table>
-    <thead>
-      <tr>
-        <th><input type="checkbox" className="sel-chk" checked={allChecked} onChange={toggleAll} /></th>
-        <th>Nome</th><th>Localidade</th><th>Status</th><th>Entrada</th><th>Ações</th>
+    <thead><tr>
+      <th className="sel-chk-cell"><input type="checkbox" className="sel-chk" checked={allChecked} onChange={toggleAll} /></th>
+      <th>Nome</th><th>Localidade</th><th>Status</th><th>Ações</th>
+    </tr></thead>
+    <tbody>{rows.map(r => (
+      <tr key={r.id} className={r.pend ? 'row-pend' : r.del ? 'row-del' : ''}>
+        <td className="sel-chk-cell"><input type="checkbox" className="sel-chk"
+          checked={sel.includes(r.id)} onChange={() => toggle(r.id)} disabled={r.del} /></td>
+        <td><strong>{r.nome}</strong></td>
+        <td><span className="badge-loc">{r.loc}</span></td>
+        <td><BadgeInside /></td>
+        <td><Dropdown icon="dots-vertical">
+          <DropdownItem icon="eye">Ver</DropdownItem>
+          <DropdownItem icon="trash" danger>Excluir</DropdownItem>
+        </Dropdown></td>
       </tr>
-    </thead>
-    <tbody>
-      {rows.map(r => (
-        <tr key={r.id} className={r.pend ? 'row-pend' : r.del ? 'row-del' : ''}>
-          <td className="sel-chk-cell">
-            <input type="checkbox" className="sel-chk" checked={sel.includes(r.id)}
-              onChange={() => toggle(r.id)} disabled={r.del} />
-          </td>
-          <td><strong>{r.nome}</strong></td>
-          <td><span className="badge-loc">{r.loc}</span></td>
-          <td><BadgeInside /></td>
-          <td><span className="elapsed">{r.entrada}</span></td>
-          <td>
-            <Dropdown label="" icon="dots-vertical">
-              <DropdownItem icon="eye">Ver detalhes</DropdownItem>
-              <DropdownSep />
-              <DropdownItem icon="trash" danger>Excluir</DropdownItem>
-            </Dropdown>
-          </td>
-        </tr>
-      ))}
-    </tbody>
+    ))}</tbody>
   </Table>
 </TableWrap>
-
 <SelBar count={sel.length} onClear={() => setSel([])}>
   <Button size="sm" variant="accent" icon="logout">Saída em lote</Button>
 </SelBar>`}>
-        <div style={{ marginBottom: 10 }}>
-          <input type="text" placeholder="Filtrar tabela..." value={q}
-            onChange={e => setQ(e.target.value)} style={{ maxWidth: 240 }} />
-        </div>
-        <TableWrap>
-          <Table>
-            <thead>
-              <tr>
-                <th className="sel-chk-cell"><input type="checkbox" className="sel-chk" checked={allChecked} onChange={toggleAll} /></th>
-                <th>Nome</th>
-                <th>Localidade</th>
-                <th>Status</th>
-                <th>Entrada</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visiveis.map(r => (
-                <tr key={r.id} className={r.pend ? 'row-pend' : r.del ? 'row-del' : ''}>
-                  <td className="sel-chk-cell">
-                    <input type="checkbox" className="sel-chk" checked={sel.includes(r.id)}
-                      onChange={() => toggle(r.id)} disabled={r.del} />
-                  </td>
-                  <td>
-                    <strong>{r.nome}</strong>
-                    {r.doc && <><br /><small style={{ color: 'var(--text3)' }}>CPF: {r.doc}</small></>}
-                  </td>
-                  <td><span className="badge-loc">{r.loc}</span></td>
-                  <td>
-                    {r.status === 'inside' && <BadgeInside />}
-                    {r.status === 'pend' && <span className="status-pend"><i className="ti ti-clock" /> Pendente</span>}
-                    {r.status === 'outside' && <BadgeOutside />}
-                  </td>
-                  <td><span className={`elapsed ${r.pend ? 'long' : ''}`.trim()}>{r.entrada || ''}</span></td>
-                  <td>
-                    {!r.del && (
-                      <Dropdown label="" icon="dots-vertical">
-                        <DropdownItem icon="eye" onClick={() => coxaToast('success', `Ver: ${r.nome}`)}>Ver detalhes</DropdownItem>
-                        <DropdownItem icon="edit">Editar</DropdownItem>
-                        <DropdownSep />
-                        <DropdownItem icon="trash" danger>Excluir</DropdownItem>
-                      </Dropdown>
-                    )}
-                  </td>
+          <TableWrap>
+            <Table>
+              <thead>
+                <tr>
+                  <th className="sel-chk-cell"><input type="checkbox" className="sel-chk" checked={allChecked} onChange={toggleAll} /></th>
+                  <th>Nome</th>
+                  <th>Localidade</th>
+                  <th>Status</th>
+                  <th>Entrada</th>
+                  <th>Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableWrap>
-        <SelBar count={sel.length} onClear={() => setSel([])}>
-          <Button size="sm" variant="accent" icon="logout" onClick={() => coxaToast('success', `${sel.length} em lote`)}>Saída em lote</Button>
-        </SelBar>
-      </Demo>
+              </thead>
+              <tbody>
+                {TBL_ROWS.map(r => (
+                  <tr key={r.id} className={r.pend ? 'row-pend' : r.del ? 'row-del' : ''}>
+                    <td className="sel-chk-cell">
+                      <input type="checkbox" className="sel-chk" checked={sel.includes(r.id)}
+                        onChange={() => toggle(r.id)} disabled={r.del} />
+                    </td>
+                    <td>
+                      <strong>{r.nome}</strong>
+                      {r.doc && <><br /><small style={{ color: 'var(--text3)' }}>CPF: {r.doc}</small></>}
+                    </td>
+                    <td><span className="badge-loc">{r.loc}</span></td>
+                    <td>
+                      {r.status === 'inside' && <BadgeInside />}
+                      {r.status === 'pend' && <span className="status-pend"><i className="ti ti-clock" /> Pendente</span>}
+                      {r.status === 'outside' && <BadgeOutside />}
+                    </td>
+                    <td><span className={`elapsed ${r.pend ? 'long' : ''}`.trim()}>{r.entrada || ''}</span></td>
+                    <td>
+                      {!r.del && (
+                        <Dropdown label="" icon="dots-vertical">
+                          <DropdownItem icon="eye" onClick={() => coxaToast('success', `Ver: ${r.nome}`)}>Ver detalhes</DropdownItem>
+                          <DropdownItem icon="edit">Editar</DropdownItem>
+                          <DropdownSep />
+                          <DropdownItem icon="trash" danger>Excluir</DropdownItem>
+                        </Dropdown>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrap>
+          <SelBar count={sel.length} onClear={() => setSel([])}>
+            <Button size="sm" variant="accent" icon="logout" onClick={() => coxaToast('success', `${sel.length} em lote`)}>Saída em lote</Button>
+          </SelBar>
+        </Demo>
+      </SubSection>
     </DocsSection>
   );
 }

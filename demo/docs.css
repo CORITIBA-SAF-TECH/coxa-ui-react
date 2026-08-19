@@ -13,7 +13,7 @@
   flex-shrink: 0;
   z-index: 100;
   background: var(--hdr-bg);
-  padding: 0 28px;
+  padding: 0 28px 0 30px;   /* folga à esquerda p/ não colar no botão da sidebar */
   min-height: 58px;   /* igual ao header da lib, p/ o botão da sidebar centralizar */
   display: flex;
   align-items: center;

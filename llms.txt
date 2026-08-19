@@ -140,7 +140,7 @@ const toggle = id => setSel(s => s.includes(id) ? s.filter(x => x !== id) : [...
     </tbody>
   </Table>
 </TableWrap>
-// Barra de seleção em lote (renderize só quando houver seleção — o componente já cuida disso):
+// Barra de seleção em lote (renderize só quando houver seleção: o componente já cuida disso):
 <SelBar count={sel.length} onClear={() => setSel([])}>
   <Button size="sm" variant="accent" icon="logout">Saída em lote</Button>
 </SelBar>
@@ -232,6 +232,38 @@ const [aba, setAba] = useState('todos');
 <KVList><KV k="Nome">João</KV><KVDivider /><KV k="Status"><BadgeInside/></KV></KVList>
 ```
 
+### DataTable (tabela padrão: prefira este)
+```jsx
+// Ordenação, busca, colunas visíveis, exportação CSV (com escolha de colunas) e paginação já embutidas.
+const columns = [
+  { key: 'nome', label: 'Nome', render: r => <strong>{r.nome}</strong> },
+  { key: 'loc', label: 'Localidade', render: r => <span className="badge-loc">{r.loc}</span>, exportValue: r => r.loc },
+  { key: 'visitas', label: 'Visitas' },   // por coluna: sortable={false}, exportable={false}, sortValue/exportValue
+];
+<DataTable columns={columns} data={rows} perPage={10} searchable exportName="visitantes.csv" />
+```
+Use as peças de baixo nível (`TableWrap`/`Table`/`SortableTh`/`useSort`/`Pagination`/`SelBar`) só quando precisar de layout muito específico ou seleção em lote.
+
+### Drawer (offcanvas), Tooltip, Skeleton, Upload, UserMenu
+```jsx
+// Painel lateral (controlado, fecha no Esc/overlay, focus trap):
+<Drawer open={x} onClose={fechar} title="Detalhes" icon="user" side="right"
+  actions={<Button variant="secondary" onClick={fechar}>Fechar</Button>}>...</Drawer>
+
+<Tooltip text="Ajuda"><Button>Passe o mouse</Button></Tooltip>
+
+<Skeleton width="40%" height={16} />  <Skeleton.Text lines={3} />  <Skeleton circle width={40} height={40} />
+
+<FileUpload accept=".pdf,.png" hint="PDF, PNG até 50MB" onChange={files => ...} />  // File[]; multiple opcional
+
+// Menu de conta no header (dentro de <HeaderRight>):
+<UserMenu name="Alberto" sub="TI" initials="AR">
+  <DropdownItem icon="user">Perfil</DropdownItem>
+  <DropdownSep />
+  <DropdownItem icon="logout" onClick={sair}>Sair</DropdownItem>
+</UserMenu>
+```
+
 ### Gráficos (Chart.js v4)
 ```jsx
 <CoxaChart type="line" height={260} data={{
@@ -246,10 +278,11 @@ const [aba, setAba] = useState('todos');
 
 ### Hooks e utilitários
 ```jsx
-import { useDarkMode, useSidebar, coxaToast, coxaConfirm } from 'coxa-ui-react';
+import { useDarkMode, useSidebar, useSort, useOverlay, coxaToast, coxaConfirm } from 'coxa-ui-react';
 
 const { dark, toggle } = useDarkMode();          // <DarkModeButton /> já faz isso no header
 const { collapsed, toggle, close } = useSidebar(); // só dentro de <AppLayout>
+// useSort(data, campo?) → ordenação de tabela; useOverlay(open, onClose) → Esc + focus trap (base de Modal/Drawer)
 
 coxaToast('success', 'Salvo com sucesso!');       // icon: success | error | warning | info
 const ok = await coxaConfirm({
@@ -271,9 +304,11 @@ if (ok) { /* … */ }
 ## Referência rápida de exports
 
 Layout: `AppLayout, ContentCol, Main, Overlay, Sidebar, SidebarToggle, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, LiveClock, Footer`
-Componentes: `Button, ButtonGroup, IconButton, Badge, BadgeInside, BadgeOutside, Tag, TagCloud, Alert, Spinner, Avatar, AvatarGroup, Breadcrumb, FilterPills, FilterPill, Progress, Empty, KVList, KV, KVDivider, Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard, TableWrap, Table, SelBar`
-Formulários: `FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox`
-Interativos: `Modal, ModalInfo, Tabs, TabPanel, LinksTabs, LinksPanel, Accordion, AccordionItem, Dropdown, DropdownItem, DropdownSep`
+Componentes: `Button, ButtonGroup, IconButton, Badge, BadgeInside, BadgeOutside, Tag, TagCloud, Alert, Spinner, Avatar, AvatarGroup, Breadcrumb, FilterPills, FilterPill, Progress, Empty, KVList, KV, KVDivider, Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard, DataTable, TableWrap, Table, SelBar, SortableTh, Pagination, Skeleton, Tooltip`
+Formulários: `FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox, FileUpload`
+Interativos: `Modal, ModalInfo, Drawer, Tabs, TabPanel, LinksTabs, LinksPanel, Accordion, AccordionItem, Dropdown, DropdownItem, DropdownSep, UserMenu`
 Padrões: `Timeline, TimelineItem, Hist, HistItem, Steps`
 Gráficos: `CoxaChart, COXA_CHART_COLORS`
-Hooks/utils: `useDarkMode, useSidebar, coxaToast, coxaConfirm, COXAUI_REACT_VERSION`
+Hooks/utils: `useDarkMode, useSidebar, useSort, useOverlay, coxaToast, coxaConfirm, COXAUI_REACT_VERSION`
+
+O pacote traz tipagens TypeScript (index.d.ts): há autocomplete e checagem de props para tudo acima.

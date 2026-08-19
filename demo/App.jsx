@@ -17,6 +17,9 @@ import {
   SecGraficos, SecBreadcrumb, SecFilterPills, SecProgress,
   SecTimeline, SecKV, SecEmpty, SecSpinner, SecApi
 } from './sections/Padroes.jsx';
+import {
+  SecDrawer, SecSkeleton, SecTooltip, SecUpload, SecUserMenu
+} from './sections/Extras.jsx';
 
 const TOC = [
   { grupo: null, links: [{ id: 'instalacao', icon: 'download', label: 'Instalação' }] },
@@ -32,14 +35,18 @@ const TOC = [
       { id: 'badges', icon: 'tag', label: 'Badges & Tags' },
       { id: 'alertas', icon: 'alert-circle', label: 'Alertas' },
       { id: 'formularios', icon: 'forms', label: 'Formulários' },
+      { id: 'upload', icon: 'upload', label: 'Upload' },
       { id: 'cards', icon: 'layout-cards', label: 'Cards' },
       { id: 'tabelas', icon: 'table', label: 'Tabelas' },
       { id: 'stat-cards', icon: 'chart-bar', label: 'Stat Cards' },
       { id: 'modal', icon: 'square', label: 'Modal' },
+      { id: 'drawer', icon: 'layout-sidebar-right', label: 'Drawer' },
       { id: 'tabs', icon: 'layout-columns', label: 'Abas (Tabs)' },
       { id: 'accordion', icon: 'list-details', label: 'Accordion' },
       { id: 'dropdown', icon: 'chevron-down', label: 'Dropdown' },
-      { id: 'avatar', icon: 'user-circle', label: 'Avatar' }
+      { id: 'tooltip', icon: 'help-circle', label: 'Tooltip' },
+      { id: 'avatar', icon: 'user-circle', label: 'Avatar' },
+      { id: 'user-menu', icon: 'user-scan', label: 'Menu do usuário' }
     ]
   },
   {
@@ -51,7 +58,8 @@ const TOC = [
       { id: 'timeline', icon: 'timeline', label: 'Timeline' },
       { id: 'kv', icon: 'list', label: 'Chave / Valor' },
       { id: 'empty', icon: 'ghost', label: 'Estado Vazio' },
-      { id: 'spinner', icon: 'loader-2', label: 'Spinner' }
+      { id: 'spinner', icon: 'loader-2', label: 'Spinner' },
+      { id: 'skeleton', icon: 'loader', label: 'Skeleton' }
     ]
   },
   { grupo: 'JavaScript', links: [{ id: 'api', icon: 'code', label: 'Hooks & Utils' }] }
@@ -130,14 +138,18 @@ export default function App() {
             <SecBadges />
             <SecAlertas />
             <SecFormularios />
+            <SecUpload />
             <SecCards />
             <SecTabelas />
             <SecStatCards />
             <SecModal />
+            <SecDrawer />
             <SecTabs />
             <SecAccordion />
             <SecDropdown />
+            <SecTooltip />
             <SecAvatar />
+            <SecUserMenu />
             <SecGraficos />
             <SecBreadcrumb />
             <SecFilterPills />
@@ -146,6 +158,7 @@ export default function App() {
             <SecKV />
             <SecEmpty />
             <SecSpinner />
+            <SecSkeleton />
             <SecApi />
           </div>
         </div>

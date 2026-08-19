@@ -1,8 +1,8 @@
 # Guia de migração: CoxaUI React
 
-## 0.1.0 → 1.0.x
+## 0.1.0 → 1.x
 
-**Boa notícia: a 1.0 é compatível com a 0.1.0.** O código existente continua funcionando sem alterações: o `SidebarToggle` e os demais componentes mantêm a mesma API. As mudanças são **visuais** ou **recursos novos opcionais** (a 1.0.1 acrescenta o padrão de tabelas e a correção do dropdown em portal).
+**Boa notícia: a 1.x é compatível com a 0.1.0.** O código existente continua funcionando sem alterações: o `SidebarToggle` e os demais componentes mantêm a mesma API. As mudanças são **visuais** ou **recursos novos opcionais** (1.0.1 traz o padrão de tabelas e o dropdown em portal; 1.1.0 traz tipagens TypeScript, acessibilidade e os componentes Drawer, Pagination, ordenação de tabela, Skeleton, Tooltip, FileUpload e UserMenu).
 
 ### 1. Atualizar o pacote
 
