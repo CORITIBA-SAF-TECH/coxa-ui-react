@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { t } from '../i18n/core.js';
 
 /* Área de upload com clique e arrastar-e-soltar.
    <FileUpload accept=".pdf,.png" hint="PDF, PNG até 50MB" onChange={files => ...} />
@@ -40,7 +41,7 @@ export function FileUpload({ accept, multiple = false, hint, label = 'Clique ou 
       {files.length > 0 && (
         <div className="file-input-file">
           <i className="ti ti-file" />
-          <span>{files.length === 1 ? files[0].name : `${files.length} arquivos`}</span>
+          <span translate={files.length === 1 ? 'no' : undefined}>{files.length === 1 ? files[0].name : t('{n} arquivos', { n: files.length })}</span>
           <button type="button" onClick={clear} aria-label="Remover"><i className="ti ti-x" /></button>
         </div>
       )}

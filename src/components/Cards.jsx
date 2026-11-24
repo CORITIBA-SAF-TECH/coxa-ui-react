@@ -3,15 +3,36 @@ export function StatCards({ children }) {
   return <div className="stat-cards">{children}</div>;
 }
 
-/* color: green | blue | orange | purple | red | yellow */
-export function StatCard({ icon, color = 'green', value, label }) {
+/* Minigráfico de tendência do StatCard (uma polilinha em SVG, sem biblioteca) */
+function Sparkline({ data }) {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const faixa = max - min || 1;
+  const pontos = data
+    .map((v, i) => `${(2 + (i * 92) / (data.length - 1)).toFixed(1)},${(29 - ((v - min) / faixa) * 26).toFixed(1)}`)
+    .join(' ');
   return (
-    <div className="stat-card">
+    <svg className="stat-spark" viewBox="0 0 96 32" aria-hidden="true">
+      <polyline pathLength="1" points={pontos} />
+    </svg>
+  );
+}
+
+/* color: green | blue | orange | purple | red | yellow
+   unit:     prefixo pequeno antes do valor (ex.: "R$")
+   Não aparecem no layout clássico:
+   featured: cartão de destaque (degradê verde, mais largo)
+   spark:    número[] com a tendência, vira um minigráfico no canto */
+export function StatCard({ icon, color = 'green', value, label, unit, spark, featured, className = '' }) {
+  const cls = ['stat-card', featured ? 'stat-card-featured' : '', className].filter(Boolean).join(' ');
+  return (
+    <div className={cls}>
       <div className={`stat-icon ${color}`}><i className={`ti ti-${icon}`} /></div>
       <div className="stat-body">
-        <div className="stat-val">{value}</div>
+        <div className="stat-val">{unit && <span className="stat-unit">{unit}</span>}{value}</div>
         <div className="stat-lbl">{label}</div>
       </div>
+      {Array.isArray(spark) && spark.length > 1 && <Sparkline data={spark} />}
     </div>
   );
 }

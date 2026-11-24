@@ -10,6 +10,11 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
    Retorna um ref para anexar ao container do conteúdo. */
 export function useOverlay(open, onClose) {
   const ref = useRef(null);
+  /* onClose fica num ref: se o efeito dependesse dele, um onClose criado a cada
+     render (o caso comum) refazia o efeito e devolvia o foco ao primeiro campo
+     a cada tecla digitada dentro do overlay. */
+  const fechar = useRef(onClose);
+  fechar.current = onClose;
   useEffect(() => {
     if (!open) return;
     const el = ref.current;
@@ -20,7 +25,7 @@ export function useOverlay(open, onClose) {
     (first || el)?.focus?.();
 
     function onKey(e) {
-      if (e.key === 'Escape') { onClose?.(); return; }
+      if (e.key === 'Escape') { fechar.current?.(); return; }
       if (e.key !== 'Tab') return;
       const f = list();
       if (!f.length) return;
@@ -38,6 +43,6 @@ export function useOverlay(open, onClose) {
       document.body.style.overflow = prevOverflow;
       if (prevActive && prevActive.focus) prevActive.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
   return ref;
 }

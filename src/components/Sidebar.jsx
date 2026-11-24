@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useSidebar } from './AppLayout.jsx';
+import { useSlideIndicator, useIsoLayoutEffect } from '../hooks/useSlideIndicator.js';
+import { motionOn } from '../utils/motion.js';
 
 /* Sidebar padrão CoxaUI. Deve vir seguida de <SidebarToggle/> (irmão direto)
    para o botão circular flutuante funcionar. */
@@ -15,7 +17,7 @@ export function Sidebar({ children, className = '', ...rest }) {
   return <aside id="sidebar" className={cls} {...rest}>{children}</aside>;
 }
 
-/* Botão recolher/expandir: círculo flutuante na borda (igual ao CoxaUI vanilla).
+/* Botão recolher/expandir: círculo flutuante na borda.
    Irmão direto da <Sidebar>, logo após ela. */
 export function SidebarToggle({ title = 'Recolher menu' }) {
   const sb = useSidebar();
@@ -67,8 +69,64 @@ export function SidebarBrand({ logo, alt = 'Logo', subtitle, href = '/', round =
   );
 }
 
+/* Rola `box` só o necessário para `el` ficar à vista, com uma folga em cima e embaixo
+   (assim aparecem também os itens vizinhos). Não mexe em mais nada da página. */
+function revelar(box, el, suave) {
+  const c = box.getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  if (!c.height) return;
+  const folga = Math.min(96, Math.max(0, (c.height - r.height) / 2));
+  let delta = 0;
+  if (r.top < c.top + folga) delta = r.top - c.top - folga;
+  else if (r.bottom > c.bottom - folga) delta = r.bottom - c.bottom + folga;
+  if (Math.abs(delta) < 1) return;
+  const top = box.scrollTop + delta;
+  if (suave && typeof box.scrollTo === 'function') box.scrollTo({ top, behavior: 'smooth' });
+  else box.scrollTop = top;
+}
+
+/* O menu acompanha o item ativo: quando o link ativo muda (navegação, ou a página rolando
+   num menu de seções), a lista rola para ele continuar à vista. Só age quando o item ativo
+   troca; quem rola o menu à mão não é puxado de volta. */
+function useFollowActive(boxRef, selector) {
+  useIsoLayoutEffect(() => {
+    const box = boxRef.current;
+    if (!box || typeof MutationObserver === 'undefined') return;
+    let ultimo = null;
+    const checar = () => {
+      const a = box.querySelector(selector);
+      if (!a) { ultimo = null; return; }
+      if (a === ultimo || !a.offsetParent) return;
+      revelar(box, a, ultimo !== null && motionOn());   /* a primeira vez vai direto, sem animar */
+      ultimo = a;
+    };
+    checar();
+    const mo = new MutationObserver(checar);
+    mo.observe(box, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+    /* o menu pode nascer escondido (sem altura): confere de novo quando ganhar tamanho */
+    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(checar);
+    ro?.observe(box);
+    return () => { mo.disconnect(); ro?.disconnect(); };
+  }, [boxRef, selector]);
+}
+
+/* Lista rolável de links. O <span className="sb-ind"> é o indicador deslizante
+   do item ativo: não aparece no layout clássico (fica oculto pelo CSS).
+   A lista rola sozinha para manter o link ativo à vista. */
 export function SidebarScroll({ children }) {
-  return <div className="sb-scroll"><div className="sb-nav">{children}</div></div>;
+  const box = useRef(null);
+  const nav = useRef(null);
+  const ind = useRef(null);
+  useSlideIndicator(nav, ind, '.sb-lnk.active', 'y');
+  useFollowActive(box, '.sb-lnk.active');
+  return (
+    <div className="sb-scroll" ref={box}>
+      <div className="sb-nav" ref={nav}>
+        <span className="sb-ind" ref={ind} aria-hidden="true" />
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export function SidebarGroup({ children }) {

@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useIsoLayoutEffect } from '../hooks/useSlideIndicator.js';
 
 /* Dropdown de ações. O menu é renderizado num portal (position: fixed),
    então nunca é cortado por containers com overflow (ex.: .tbl-wrap).
@@ -34,7 +35,7 @@ export function Dropdown({ label, icon = 'dots-vertical', variant = 'secondary',
     setPos(style);
   }
 
-  useLayoutEffect(() => { if (open) place(); }, [open]);
+  useIsoLayoutEffect(() => { if (open) place(); }, [open]);
 
   useEffect(() => {
     if (!open) return;

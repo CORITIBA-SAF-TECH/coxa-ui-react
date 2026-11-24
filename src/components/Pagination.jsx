@@ -2,7 +2,10 @@
    <Pagination page={p} total={240} perPage={20} onChange={setP} />
    Mostra no máximo `siblings` páginas de cada lado da atual, com reticências,
    setas de anterior/próxima e um resumo "X a Y de Z" (se showInfo). */
+import { t, useI18n } from '../i18n/core.js';
+
 export function Pagination({ page = 1, total = 0, perPage = 10, onChange, siblings = 1, showInfo = true }) {
+  useI18n();   /* o resumo é montado com t(): redesenha quando o idioma muda */
   const pages = Math.max(1, Math.ceil(total / perPage));
   const go = p => { if (p >= 1 && p <= pages && p !== page) onChange?.(p); };
 
@@ -21,7 +24,7 @@ export function Pagination({ page = 1, total = 0, perPage = 10, onChange, siblin
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-      {showInfo && <span className="pg-info">{start} a {end} de {total}</span>}
+      {showInfo && <span className="pg-info">{t('{start} a {end} de {total}', { start, end, total })}</span>}
       <nav className="pagination" aria-label="Paginação">
         <button className="pg-btn" type="button" onClick={() => go(page - 1)} disabled={page <= 1} aria-label="Anterior">
           <i className="ti ti-chevron-left" />

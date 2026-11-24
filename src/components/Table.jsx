@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { t } from '../i18n/core.js';
 
 /* ── Tabelas ──
    Use elementos <table>/<thead>/<tbody>/<tr>/<th>/<td> normais dentro de
@@ -65,7 +66,7 @@ export function SortableTh({ field, sort, onSort, children, ...rest }) {
    </SelBar> */
 export function SelBar({ count = 0, children, onClear, label }) {
   if (!count) return null;
-  const txt = label || `${count} ${count === 1 ? 'item selecionado' : 'itens selecionados'}`;
+  const txt = label || (count === 1 ? t('{n} item selecionado', { n: count }) : t('{n} itens selecionados', { n: count }));
   return (
     <div className="sel-bar" style={{ display: 'flex' }}>
       <span className="sel-bar-lbl">{txt}</span>

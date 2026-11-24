@@ -8,7 +8,7 @@ Este arquivo orienta assistentes de IA (Claude, Copilot, etc.) a construir aplic
 2. **Não reescreva o CSS.** Todos os estilos vêm de `coxa-ui-react/style.css`. Use os componentes e as classes existentes; não crie CSS paralelo para o que já existe.
 3. **Ícones** são do Tabler Icons v3, já carregados. Nos componentes passe só o nome (`icon="check"`); em markup solto use `<i className="ti ti-check" />`.
 4. **Importe o CSS uma vez** no entry da aplicação: `import 'coxa-ui-react/style.css'`.
-5. **Cores da marca:** primary `#006B3C` (verde), accent `#fad716` (amarelo), danger `#ea580c` (laranja). Header/rodapé são offwhite; a sidebar é verde.
+5. **Cores da marca:** primary `#006B3C` (verde), accent `#fad716` (amarelo), danger `#ea580c` (laranja). Header/rodapé são offwhite; a sidebar é verde (`#00544d`, Pantone 3305).
 
 ## Instalação
 
@@ -55,7 +55,8 @@ export default function App() {
           <HeaderRight><DarkModeButton /></HeaderRight>
         </Header>
         <Main>{/* conteúdo */}</Main>
-        <Footer left="Minha App © 2026 Coritiba SAF" />
+        {/* esquerda: sistema, versão e commit · direita: copyright · centro: vazio */}
+        <Footer system="Minha App" version="1.0.0" commit={gitCommit} copyright="© 2026 Coritiba SAF" />
       </ContentCol>
     </AppLayout>
   );
@@ -66,8 +67,76 @@ export default function App() {
 - `<AppLayout>` é a raiz (flex row). Dentro: `<Sidebar>`, `<SidebarToggle>`, `<Overlay>` e `<ContentCol>`.
 - `<SidebarToggle>` é o botão circular flutuante (recolher/expandir), irmão direto da `<Sidebar>` (logo após ela).
 - `<SidebarFooter>` (opcional) fica **dentro** de `<Sidebar>`, depois do `<SidebarScroll>`: renderiza o botão "voltar ao portal" fixo na base.
+- O `<SidebarScroll>` rola sozinho para manter o `<SidebarLink active>` à vista: não escreva `scrollIntoView` para o menu.
 - `<ContentCol>` contém `<Header>`, `<Main>` e `<Footer>`, nessa ordem.
-- A sidebar inicia **recolhida** no desktop; a preferência (recolhida/aberta) e o modo escuro persistem em `localStorage` (chaves `coxaui-sb` e `coxaui-dark`, compartilhadas com o CoxaUI vanilla).
+- A sidebar inicia **recolhida** no desktop; a preferência (recolhida/aberta) e o modo escuro persistem em `localStorage` (chaves `coxaui-sb` e `coxaui-dark`).
+
+## Layout (já vem ligado)
+
+O acabamento da casca e dos componentes, com movimento e modo escuro em neutros esverdeados, é o padrão da biblioteca. **Não há nada para ligar:** não passe `layout` ao `<AppLayout>`, não ponha atributo no `<html>` e não chame `useCoxaLayout` em telas de login ou de erro.
+
+- **Não crie CSS para "modernizar"** cartões, sombras ou animações: a biblioteca já faz isso.
+- Animações param sozinhas com `prefers-reduced-motion`. Não adicione bibliotecas de animação.
+- Troca de tela animada: envolva a navegação em `viewTransition(() => navigate('/rota'))` (ou `setTela(...)`).
+- No modo claro o fundo da página é `#dfe3e8` e o cabeçalho e o rodapé são offwhite (`#f4f3ef`); superfícies internas e bordas são neutros esverdeados. No modo escuro, fundo, cabeçalho e rodapé são bem escuros (`#0b1310` / `#111916`). A sidebar é `#00544d`.
+- Tabelas já têm fundo próprio (`table` e `.tbl-wrap`): não ponha `background` nas linhas para "dar leitura".
+- `layout="classic"` existe só para manter o visual da 1.1 num app antigo; não use a não ser que peçam isso.
+
+### Cabeçalho completo (copie como base)
+
+```jsx
+const cmd = useCommandPalette();                  // estado + atalho Ctrl K
+
+<Header>
+  <MenuButton />
+  <HeaderPage icon="receipt" title="Títulos" desc="Contas a Receber" />
+  <HeaderSearch onClick={cmd.show} />
+  <HeaderRight>
+    <LanguageSelector />                          {/* Português (Brasil) · Español · English, com bandeira */}
+    <DarkModeButton />
+    <UserMenu name="Alberto" sub="TI" initials="AR">...</UserMenu>
+  </HeaderRight>
+</Header>
+
+<CommandPalette open={cmd.open} onClose={cmd.close} commands={[
+  { group: 'Ir para', icon: 'receipt', label: 'Títulos', onSelect: () => navigate('/titulos') },
+  { group: 'Ações', icon: 'moon', label: 'Alternar tema', keywords: 'escuro claro', onSelect: toggle }
+]} />
+```
+O cabeçalho padrão é este: busca, idioma, tema e conta. `EnvBadge` (selo de ambiente), `SessionChip` (tempo de sessão) e `PrivacyButton` (ocultar valores) existem, mas **não fazem parte do cabeçalho padrão**: só coloque se pedirem.
+`HeaderSearch` fica entre `HeaderPage` e `HeaderRight`.
+
+## Tradução (pt-BR, es, en)
+
+O sistema é escrito em **português**: o texto do código é a chave da tradução. O que não tiver tradução registrada aparece em português, então dá para traduzir aos poucos.
+
+```jsx
+// 1. Uma vez, no entry (main.jsx), antes de desenhar a tela:
+import { registerMessages } from 'coxa-ui-react';
+registerMessages({
+  es: { 'Salvar título': 'Guardar título', '{n} títulos em aberto': '{n} títulos pendientes' },
+  en: { 'Salvar título': 'Save receivable', '{n} títulos em aberto': '{n} open receivables' }
+});
+
+// 2. O seletor no cabeçalho (grava a escolha e recarrega a página):
+<HeaderRight><LanguageSelector /></HeaderRight>
+
+// 3. Texto passado a um componente da lib é traduzido sozinho:
+<Button>Salvar título</Button>   <FormGroup label="Valor do título">…</FormGroup>   <HeaderPage title="Títulos" />
+
+// 4. Texto montado no código, mensagens e texto em HTML solto usam t():
+import { t } from 'coxa-ui-react';
+<p>{t('{n} títulos em aberto', { n })}</p>      notify('success', 'Título salvo')   // notify, confirmDialog e showLoading já traduzem
+
+// Trecho que nunca deve ser traduzido (nome próprio, dado do usuário):
+<span translate="no">{cliente.nome}</span>
+```
+- Escreva sempre o texto em português no código. Não invente chaves (`'btn.save'`) nem outro sistema de i18n.
+- Os textos da própria lib ("Cancelar", "Filtrar...", paginação, páginas de erro) já vêm traduzidos: não os repita no dicionário.
+- Com variável, use `t('… {n} …', { n })`. Não concatene pedaços traduzidos.
+- O `value` de `<option>`, de `Combobox`, `Segmented` e `RadioGroup` nunca é traduzido, só o rótulo: a lógica continua comparando com o valor de origem.
+- O ícone automático do `<Button>` vem do rótulo em português e continua certo nos outros idiomas.
+- `getMissingMessages()` lista o que apareceu na tela sem tradução no idioma atual.
 
 ## Componentes e props principais
 
@@ -77,9 +146,16 @@ export default function App() {
 // variant: primary | secondary | danger | warning | accent | ghost
 // size:    xs | sm | (padrão) | lg
 // as="a" href="..."  → renderiza como link
+// loading            → troca o ícone por um spinner e desabilita
 <ButtonGroup>…</ButtonGroup>
 <IconButton icon="dots-vertical" onClick={…} />
 ```
+**Todo botão tem ícone (1.2).** Sem a prop `icon`, o `<Button>` escolhe o ícone pelo rótulo: Cancelar/Fechar → `x`, Salvar/Confirmar → `check`, Voltar → `arrow-left`, Excluir/Remover → `trash`, Editar → `pencil`, Novo/Adicionar → `plus`, Buscar → `search`, Filtrar → `filter`, Tentar de novo/Atualizar → `refresh`, Ver/Detalhes → `eye`, Baixar → `download`, Enviar → `send`, Sair → `logout`. Rótulo desconhecido recebe o ícone da variante.
+- Não é preciso (nem errado) passar `icon="x"` em "Cancelar": o padrão já faz isso. Passe `icon` quando quiser um ícone diferente do padrão.
+- `icon={false}` tira o ícone; use só se pedirem um botão sem ícone.
+- Em botão feito com markup solto (`<button className="btn btn-s">`), coloque o ícone à mão: `<i className="ti ti-x" /> Cancelar`.
+- Rótulos próprios do app, uma vez no entry: `registerButtonIcons({ conciliar: 'arrows-exchange' })`.
+- Salvando: `<Button loading={salvando}>Salvar</Button>` (não monte spinner à mão dentro do botão).
 
 ### Badges e tags
 ```jsx
@@ -101,6 +177,11 @@ export default function App() {
   <StatCard icon="users" color="green" value="42" label="Visitantes" />
 </StatCards>
 // StatCard color: green | blue | orange | purple | red | yellow
+// 1.2: unit="R$" (prefixo pequeno), featured (cartão de destaque) e
+//      spark={[...números]} (minigráfico). Use featured em no máximo um cartão.
+<StatCard featured icon="cash" unit="R$" label="Recebido no mês"
+  value={<Sensitive><CountUp value={1.28} decimals={2} suffix=" mi" /></Sensitive>}
+  spark={[520, 610, 580, 760, 700, 880, 820, 990, 1280]} />
 
 <Cards>
   <CardItem section="Financeiro" title="Manual" subtitle="…"
@@ -174,6 +255,28 @@ const toggle = id => setSel(s => s.includes(id) ? s.filter(x => x !== id) : [...
 </TipoOpts>
 ```
 
+### Campos com ícone, máscara, moeda e erro (1.2)
+```jsx
+<FormGroup label="Nome" required error={erros.nome}>     {/* error: campo em laranja + mensagem abaixo */}
+  <input type="text" />
+</FormGroup>
+
+<InputGroup icon="mail"><input type="email" /></InputGroup>          // icon OU prefix
+<InputGroup prefix="R$" suffix="/mês"><input type="text" /></InputGroup>
+<PasswordInput value={senha} onChange={e => setSenha(e.target.value)} />   // olho de mostrar/ocultar
+<SearchInput value={busca} onChange={setBusca} placeholder="Buscar..." />   // onChange recebe o texto
+
+// Máscaras: onChange recebe (textoComMáscara, textoLimpo)
+<MaskedInput mask="cpf" value={cpf} onChange={setCpf} />
+// mask: cpf | cnpj (aceita o alfanumérico) | cpfCnpj | telefone | cep | data | hora | padrão "000-AA" | função
+<CurrencyInput value={valor} onChange={setValor} />      // value/onChange em número (null = vazio)
+// Fora de campos: applyMask(v, 'cnpj'), unmask(texto), formatBRL(1250.9, true) → "R$ 1.250,90"
+
+<RadioGroup name="tipo" value={tipo} onChange={setTipo} options={[{ value: 'pf', label: 'Pessoa física' }, { value: 'pj', label: 'Pessoa jurídica' }]} />
+<Segmented value={visao} onChange={setVisao} options={[{ value: 'lista', label: 'Lista', icon: 'list' }, { value: 'grade', label: 'Grade', icon: 'layout-grid' }]} />
+```
+Não escreva função de máscara de CPF/CNPJ/telefone/CEP nem formatador de moeda no app: use os de cima.
+
 ### Combobox (select com busca)
 ```jsx
 const [depto, setDepto] = useState('');
@@ -220,14 +323,16 @@ const [aba, setAba] = useState('todos');
 
 ### Padrões
 ```jsx
+// O que JÁ ACONTECEU com um registro, em ordem de tempo:
 <Timeline><TimelineItem date="28 jun" title="Publicado" variant="warn">…</TimelineItem></Timeline>
 <Hist><HistItem badge="Entrada" title="João entrou" meta={['08h30','Sede']} /></Hist>
-<Steps items={['Localidade','Portaria','Visitante']} current={1} />
+// O passo a passo que o usuário AINDA VAI percorrer (não confundir com Timeline):
+<Steps items={['Localidade','Portaria','Visitante']} current={1} />   // só a trilha (colunas iguais, número em cima); o fluxo completo é o <Wizard>
 <Breadcrumb items={[{label:'Início',href:'/'},{label:'Atual'}]} />
 <FilterPills><FilterPill active>Todos</FilterPill><FilterPill icon="building">Sede</FilterPill></FilterPills>
 <Progress label="Doc" value={75} variant="success" />  {/* variant: success|warning|(padrão) */}
 <Empty icon="users" action={<Button size="sm" icon="plus">Novo</Button>}>Nada encontrado.</Empty>
-<Spinner label="Carregando..." /> <Spinner inline />
+<Spinner inline />   {/* só dentro de texto/linha; para carregar uma área ou a tela, use o escudo: ver "Carregamento" */}
 <Avatar size="lg">JD</Avatar> <AvatarGroup>…</AvatarGroup>
 <KVList><KV k="Nome">João</KV><KVDivider /><KV k="Status"><BadgeInside/></KV></KVList>
 ```
@@ -243,6 +348,37 @@ const columns = [
 <DataTable columns={columns} data={rows} perPage={10} searchable exportName="visitantes.csv" />
 ```
 Use as peças de baixo nível (`TableWrap`/`Table`/`SortableTh`/`useSort`/`Pagination`/`SelBar`) só quando precisar de layout muito específico ou seleção em lote.
+
+```jsx
+// Filtro no cabeçalho (1.2): uma segunda linha do cabeçalho, com um campo por coluna.
+<DataTable columnFilters columns={[
+  { key: 'cliente', label: 'Cliente' },                            // texto ("contém", sem acento nem caixa)
+  { key: 'centro', label: 'Centro de custo', filter: 'select' },   // lista com os valores que a tabela tem
+  { key: 'venc', label: 'Vencimento', filter: 'date' },            // período De/Até (valores AAAA-MM-DD)
+  { key: 'valor', label: 'Valor', filter: false }                  // sem filtro
+]} data={rows} />
+// Sem columnFilters, só filtram as colunas que declararem filter.
+// Célula que mostra algo diferente do valor bruto (badge, nome composto):
+//   filter: { type: 'select', value: row => row.status.nome, label: v => v, options: [...], placeholder: '...' }
+// initialFilters={{ situacao: 'Aberto' }} abre filtrado; onFiltersChange={f => ...} avisa o app.
+// Os filtros valem junto com a busca, a ordenação, a paginação e o CSV. Não monte linha de filtros à mão.
+
+// Linha expansível (1.2): o detalhe abre embaixo da linha, sem modal.
+<DataTable columns={columns} data={rows}
+  detail={row => <KVList><KV k="Contato">{row.contato}</KV></KVList>}     // cria a coluna da seta
+  rowClassName={row => row.vencido ? 'row-pend' : undefined} />
+// render e detail recebem (row, { open, toggle }); detailToggle={false} tira a coluna da seta.
+// Abrir pelo texto da célula: render: (r, d) => <button type="button" className="dt-link" onClick={d.toggle}>{r.nome}</button>
+
+// Painel de filtros acima da tabela (1.2). Enter em um campo busca.
+<FilterBar onSearch={buscar} onClear={limpar} loading={carregando}
+  options={<ChkOpt checked={soAtivos} onChange={setSoAtivos}>Só ativos</ChkOpt>}
+  actions={<Button variant="secondary" icon="download">Exportar</Button>}>
+  <DateRange from={de} to={ate} onChange={(de, ate) => { setDe(de); setAte(ate); }} />   {/* AAAA-MM-DD; ocupa 2 colunas */}
+  <FilterField label="Situação"><select>...</select></FilterField>                        {/* span={2} alarga */}
+</FilterBar>
+```
+Não monte grade de filtros com CSS próprio: use `FilterBar`. Para filtro simples de texto, `searchable` do `DataTable` basta.
 
 ### Drawer (offcanvas), Tooltip, Skeleton, Upload, UserMenu
 ```jsx
@@ -276,6 +412,127 @@ Use as peças de baixo nível (`TableWrap`/`Table`/`SortableTh`/`useSort`/`Pagin
 ```
 **Não defina cores nos datasets.** Sem cor, cada série recebe automaticamente uma variação do verde primary (nunca vermelho) e o tema claro/escuro é aplicado sozinho.
 
+### Sessão, modo privado e ação destrutiva (1.2)
+```jsx
+// Dado sensível (valor, CPF, gráfico financeiro): marque com <Sensitive>; o <PrivacyButton /> do header borra tudo.
+<td><Sensitive>R$ 184.000,00</Sensitive></td>
+<Sensitive as="div"><CoxaChart ... /></Sensitive>
+const { hidden, toggle, setHidden } = usePrivacy();
+// É recurso de tela: o dado continua no DOM. O que o usuário não pode ver não deve vir do backend.
+
+// Ação destrutiva sem modal: só confirma se ficar pressionado (mouse, toque, Espaço/Enter).
+<HoldButton icon="trash" onConfirm={excluir}>Segure para excluir</HoldButton>   // aceita as props do Button; duration em ms
+
+// Sessão: a validade real é do backend; o hook só espelha o relógio. sessao.set(segundos) acerta com o servidor.
+const sessao = useCountdown(total, { warnAt: 60, onWarn, onExpire, paused });   // { left, warning, reset, set }
+
+// Toast leve, sem dependência (prefira este em telas novas; coxaToast continua existindo):
+notify('success', 'Título salvo');   // kind: success | info | warning | error (laranja)
+
+// Número que conta até o valor:
+<CountUp value={742} suffix=" mil" />   // decimals, prefix, suffix, duration
+
+// Confirmação leve, sem dependência (prefira esta em telas novas; coxaConfirm continua existindo).
+// Os botões já vêm com ícone; em ação destrutiva use danger (laranja, foco em Cancelar).
+const ok = await confirmDialog({ title: 'Excluir título?', text: 'Não pode ser desfeito.', confirmText: 'Excluir', danger: true });
+
+// Páginas de resultado (rota inexistente, sem permissão, erro, sucesso) e abertura do app:
+<Result status="404" actions={<Button as="a" href="/">Início</Button>} />   // 404 | 403 | 500 | offline | manutencao | success
+<Result status="success" title="Nota emitida">A NFS-e 1234 foi autorizada.</Result>
+// (a tela cheia de abertura está em "Carregamento", abaixo)
+
+// Copiar para a área de transferência, com confirmação no próprio botão:
+<CopyButton text={chave}>Copiar chave</CopyButton>   <CopyButton text={chave} />   // sem children: só o ícone
+<Kbd>Ctrl</Kbd> <Kbd>K</Kbd>
+```
+
+### Carregamento (1.2): escudo, anel e variações
+```jsx
+// Sete desenhos, todos nas cores da marca. variant: ring | dots | bars | pulse | orbit | linear | logo
+<Loader />                                            // anel: o carregamento normal (32 px)
+<Loader variant="dots" row label="Buscando..." />     // row: rótulo ao lado
+<Loader variant="linear" />                           // barra indeterminada, ocupa a largura do container
+<Loader variant="logo" />  ou  <LogoLoader />         // o escudo do Coritiba, embutido na lib (64 px)
+// size: número em px, ou sm (18) | md (32) | lg (48) · label · light (fundos escuros)
+
+// Modal de carregamento, com o fundo desfocado e a tela bloqueada (escudo por padrão):
+<LoadingOverlay open={salvando} label="Salvando título..." />
+<LoadingOverlay open={salvando} variant="ring" label="Salvando..." />
+const fechar = showLoading('Emitindo nota...');       // sem estado; showLoading('...', { variant: 'dots' })
+try { await emitir(); } finally { fechar(); }
+
+// Só sobre um cartão (o pai precisa de position: relative):
+<div style={{ position: 'relative' }}><LoadingOverlay local open={recarregando} label="Atualizando..." /> ... </div>
+
+// Tela cheia de abertura do app (validação de sessão); aceita variant também:
+if (carregandoSessao) return <LoadingScreen label="Validando sua sessão..." />;
+
+// O mesmo escudo serve para a marca: import { COXA_LOGO } from 'coxa-ui-react'; <SidebarBrand logo={COXA_LOGO} />
+```
+Escolha: abertura do app → `LoadingScreen`; operação que bloqueia a tela → `LoadingOverlay`/`showLoading` (escudo); área que recarrega → `LoadingOverlay local`, `Loader variant="linear"` no topo dela ou `Skeleton`; espera dentro de uma linha → `<Loader size="sm" row>`; botão → `<Button loading>`. Sem pedido específico, use o escudo para a tela e o anel (`<Loader />`) para o resto; as outras variações são para quando pedirem. Não crie spinner nem tela de carregamento com CSS próprio.
+
+### Árvore (1.2)
+```jsx
+const itens = [
+  { id: 'adm', label: 'Administrativo', icon: 'building', children: [
+    { id: 'fin', label: 'Financeiro', icon: 'coin', badge: 12 }
+  ] },
+  { id: 'com', label: 'Comercial' }
+];
+<Tree items={itens} selected={sel} onSelect={(id, item) => setSel(id)} defaultExpanded={['adm']}
+  actions={item => <IconButton icon="plus" title="Novo filho" onClick={...} />} />
+
+// Caixas de marcação em cascata (permissões): checked guarda os ids das FOLHAS;
+// o pai fica marcado, parcial ou vazio conforme os filhos.
+<Tree items={permissoes} checkable checked={marcados} onCheckedChange={setMarcados} defaultExpandAll />
+// item: { id, label, icon, badge, disabled, children } · controlado: expanded + onExpandedChange
+```
+
+### Movimento
+A interface já se move sozinha (entrada em sequência, o que abre, o que se escolhe, etapas, estados). Para o conteúdo do app há três classes:
+```jsx
+<div className="cx-stagger">…filhos entram um depois do outro…</div>
+<section className="cx-rise">…entra subindo…</section>
+<Badge className="cx-pop-in">novo</Badge>
+```
+Não escreva `@keyframes` no app nem traga biblioteca de animação.
+
+### Popover, anexos, comentários, etapas e versões (1.2)
+```jsx
+// Painel flutuante com conteúdo livre (Tooltip = só texto; Dropdown = só itens de menu):
+<Popover trigger={<Button variant="secondary" icon="adjustments-horizontal">Exibição</Button>} title="Exibição" align="left">
+  {({ close }) => <Button size="sm" onClick={close}>Aplicar</Button>}      {/* children também pode ser conteúdo direto */}
+</Popover>
+
+// Arquivos já enviados (o FileUpload só envia):
+<AttachmentList items={anexos} onRemove={a => excluir(a.id)} />   // item: { name, size (bytes), url, meta, id }
+// onOpen={(a, e) => { e.preventDefault(); ver(a); }} · removable={a => a.meu} · compact · formatBytes(1843200) → "1,8 MB"
+
+// Fio de comentários de um registro:
+<CommentList>
+  <Comment author="Maria Souza" when="24/11 09:12">Recebido.</Comment>
+  <Comment author="João Lima" when="24/11 09:40" reply tag={<Badge color="blue">solicitante</Badge>}>Obrigado!</Comment>
+</CommentList>
+<CommentBox value={texto} onChange={setTexto} onSubmit={enviar} loading={enviando} />   // Ctrl + Enter envia
+
+// Fluxo em etapas (o <Steps> só desenha a trilha; o <Wizard> avança, volta, pula, valida e conclui):
+<Wizard steps={[
+    { label: 'Dados', content: <FormDados />, canNext: !!form.nome },
+    { label: 'Perfil', content: <FormPerfil />, optional: true },
+    { label: 'Revisão', content: <Resumo /> }
+  ]}
+  onNext={async etapa => { if (etapa === 0) return salvarRascunho(); }}    // retornar false segura na etapa
+  onFinish={concluir} onCancel={fechar} finishLabel="Cadastrar" />        // controlado: step + onStepChange
+
+// <Steps items={[...]} current={i} /> desenha a mesma trilha do Wizard. Não passe centered: já é o padrão.
+
+// Rodapé: sistema, versão e commit à ESQUERDA; copyright à DIREITA; centro vazio (só com a prop center).
+<Footer system="Minha App" version={versao} commit={gitCommit} env={devMode ? 'DEV' : null}
+  systemHref="/versoes" onSystemClick={() => navigate('/versoes')} copyright="© 2026 Coritiba SAF" />
+<Changelog current={versao} versions={[{ version: '2.4.0', date: '24/11/2026', items: ['Exportação em PDF'] }]} />
+// versão: items (lista de textos) e/ou content (qualquer conteúdo)
+```
+
 ### Hooks e utilitários
 ```jsx
 import { useDarkMode, useSidebar, useSort, useOverlay, coxaToast, coxaConfirm } from 'coxa-ui-react';
@@ -299,11 +556,16 @@ if (ok) { /* … */ }
 - ❌ Colocar `<SidebarFooter>` fora da `<Sidebar>`: ele precisa estar dentro, após o `<SidebarScroll>`.
 - ❌ Definir cores manuais nos gráficos ou usar vermelho em qualquer lugar.
 - ❌ Recriar layout com `<div>` e CSS próprio quando já há `AppLayout`/`ContentCol`/`Header`/`Footer`.
+- ❌ Tirar o ícone de um botão (`icon={false}`) sem que peçam, ou montar um botão "Cancelar" em markup solto sem o `ti ti-x`.
 - ❌ Usar `Modal` sem controlar `open`/`onClose` (ele é controlado, não gerencia estado interno).
+- ❌ Escrever CSS com `[data-coxa-layout]` no app ou criar animações próprias: a biblioteca já cobre isso.
+- ❌ Passar a prop `layout` ao `<AppLayout>` ou chamar `useCoxaLayout`: o layout já vem ligado.
+- ❌ Tratar `<Sensitive>` ou `<LockScreen>` como controle de acesso: são recursos de tela; a autorização é do backend.
 
 ## Referência rápida de exports
 
-Layout: `AppLayout, ContentCol, Main, Overlay, Sidebar, SidebarToggle, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, Header, MenuButton, HeaderPage, HeaderRight, DarkModeButton, LiveClock, Footer`
+Layout: `AppLayout, ContentCol, Main, Overlay, Sidebar, SidebarToggle, SidebarFooter, SidebarHeader, SidebarBrand, SidebarScroll, SidebarGroup, SidebarLink, Header, MenuButton, HeaderPage, HeaderRight, HeaderSearch, EnvBadge, DarkModeButton, LiveClock, Footer`
+Novos na 1.2: `HeaderSearch, EnvBadge, CommandPalette, useCommandPalette, SessionChip, LockScreen, useCountdown, Sensitive, PrivacyButton, usePrivacy, HoldButton, CountUp, notify, viewTransition, useCoxaLayout, InputGroup, PasswordInput, SearchInput, MaskedInput, CurrencyInput, RadioGroup, Segmented, Result, LoadingScreen, CopyButton, Kbd, confirmDialog, registerButtonIcons, buttonIconFor, masks, applyMask, unmask, formatBRL, Popover, FilterBar, FilterField, DateRange, AttachmentList, formatBytes, Wizard, Changelog, CommentList, Comment, CommentBox, Tree, Loader, LogoLoader, LoadingOverlay, showLoading, COXA_LOGO, LanguageSelector, Flag, t, useI18n, registerMessages, setLanguage, getLanguage, getMissingMessages`
 Componentes: `Button, ButtonGroup, IconButton, Badge, BadgeInside, BadgeOutside, Tag, TagCloud, Alert, Spinner, Avatar, AvatarGroup, Breadcrumb, FilterPills, FilterPill, Progress, Empty, KVList, KV, KVDivider, Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard, DataTable, TableWrap, Table, SelBar, SortableTh, Pagination, Skeleton, Tooltip`
 Formulários: `FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox, FileUpload`
 Interativos: `Modal, ModalInfo, Drawer, Tabs, TabPanel, LinksTabs, LinksPanel, Accordion, AccordionItem, Dropdown, DropdownItem, DropdownSep, UserMenu`

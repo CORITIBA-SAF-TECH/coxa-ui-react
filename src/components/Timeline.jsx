@@ -40,10 +40,15 @@ export function HistItem({ badge, title, meta = [] }) {
   );
 }
 
-/* ── Steps (wizard) ── */
-export function Steps({ items = [], current = 0 }) {
+/* ── Steps (trilha de etapas) ──
+   Cada etapa é uma coluna de largura igual, com o número em cima e o rótulo embaixo, e a
+   trilha ocupa a largura toda. É a mesma trilha que o <Wizard> desenha.
+   centered={false} troca pela trilha compacta, com número e rótulo lado a lado.
+   (No layout clássico, sem a prop, vale a trilha compacta da 1.1; centered força as colunas.) */
+export function Steps({ items = [], current = 0, centered }) {
+  const modo = centered === true ? 'steps-center' : centered === false ? 'steps-inline' : '';
   return (
-    <div className="steps">
+    <div className={`steps ${modo}`.trim()}>
       {items.map((label, i) => {
         const state = i < current ? 'done' : i === current ? 'active' : '';
         return (
