@@ -174,7 +174,8 @@ export function SecProgress() {
 
 export function SecTimeline() {
   return (
-    <DocsSection id="timeline" icon="timeline" title="Timeline / Histórico">
+    <DocsSection id="timeline" icon="timeline" title="Timeline e histórico"
+      desc="Para mostrar o que já aconteceu com um registro, em ordem de tempo. Não é o mesmo que as etapas de um fluxo: para o passo a passo que o usuário percorre, veja Etapas e wizard.">
       <SubSection title="Timeline vertical">
         <Demo code={`<Timeline>
   <TimelineItem date="28 Jun 2026 · 14h30" title="Manual publicado">
@@ -197,11 +198,6 @@ export function SecTimeline() {
             <HistItem badge="Entrada" title="João entrou pela Portaria 1" meta={['08h30', 'Sede']} />
             <HistItem badge="Saída" title="Maria saiu pela Portaria 2" meta={['17h45', 'CT']} />
           </Hist>
-        </Demo>
-      </SubSection>
-      <SubSection title="Steps (wizard)">
-        <Demo code={`<Steps items={['Localidade', 'Portaria', 'Visitante']} current={1} />`}>
-          <Steps items={['Localidade', 'Portaria', 'Visitante']} current={1} />
         </Demo>
       </SubSection>
     </DocsSection>
@@ -258,8 +254,13 @@ export function SecSpinner() {
 
 export function SecApi() {
   const rows = [
-    ['useDarkMode()', '{ dark, toggle, setDark }: modo escuro persistente (coxaui-dark)'],
+    ['useDarkMode()', '{ dark, toggle, setDark }: modo escuro persistente (coxaui-dark); instâncias sincronizadas'],
     ['useSidebar()', '{ collapsed, open, toggle, close }: estado da sidebar dentro de AppLayout'],
+    ['useCommandPalette()', '{ open, show, close, toggle }: estado da paleta + atalho Ctrl K (1.2)'],
+    ['useCountdown(total, opts)', '{ left, warning, reset, set }: contagem regressiva de sessão (1.2)'],
+    ['usePrivacy()', '{ hidden, toggle, setHidden }: modo privado dos <Sensitive> (1.2)'],
+    ['notify(kind, msg, opts?)', 'Toast leve, sem dependência (1.2)'],
+    ['viewTransition(update)', 'Troca de tela animada pela View Transitions API (1.2)'],
     ['useSort(data, campo?, dir?)', '{ rows, sort, toggle }: ordenação de tabela (use com SortableTh)'],
     ['useOverlay(open, onClose)', 'Esc + focus trap + lock de scroll (base de Modal e Drawer)'],
     ['coxaToast(icon, msg)', 'Toast padrão via SweetAlert2'],

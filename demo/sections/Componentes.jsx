@@ -3,7 +3,7 @@ import {
   Button, ButtonGroup, IconButton,
   Badge, BadgeInside, BadgeOutside, Tag, TagCloud,
   Alert, Avatar, AvatarGroup,
-  Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard,
+  Cards, CardItem, AdmCard, LinkCards, LinkCard, StatCards, StatCard, CountUp,
   TableWrap, Table, SelBar, DataTable,
   FormCard, FormRow, FormGroup, FormActions, Toggle, ChkOpt, TipoOpts, TipoOpt, Combobox, MultiCombobox,
   Modal, ModalInfo, Tabs, TabPanel,
@@ -13,10 +13,62 @@ import {
 } from '../../src/index.js';
 import { DocsSection, SubSection, Demo } from '../DocsBlocks.jsx';
 
+function BotaoCarregando() {
+  const [salvando, setSalvando] = useState(false);
+  const salvar = () => { setSalvando(true); setTimeout(() => setSalvando(false), 1800); };
+  return (
+    <Demo code={`<Button loading={salvando} onClick={salvar}>{salvando ? 'Salvando...' : 'Salvar'}</Button>
+// loading troca o ícone por um spinner e desabilita o botão`}>
+      <div className="demo-gap">
+        <Button loading={salvando} onClick={salvar}>{salvando ? 'Salvando...' : 'Salvar'}</Button>
+        <Button variant="secondary" loading>Enviando...</Button>
+      </div>
+    </Demo>
+  );
+}
+
 export function SecBotoes() {
   return (
     <DocsSection id="botoes" icon="pointer" title="Botões"
-      desc="Variantes de cor e tamanho. Danger é laranja: vermelho é proibido no projeto.">
+      desc="Variantes de cor e tamanho. Danger é laranja: vermelho é proibido no projeto. Todo botão tem ícone: sem a prop icon, ele é escolhido pelo rótulo.">
+      <SubSection title="Ícone padrão (pelo rótulo)">
+        <Demo code={`// Sem a prop icon: o ícone vem do rótulo
+<Button variant="secondary">Cancelar</Button>      // x
+<Button>Salvar</Button>                            // check
+<Button variant="secondary">Voltar</Button>        // arrow-left
+<Button variant="danger">Excluir</Button>          // trash
+<Button variant="ghost">Tentar de novo</Button>    // refresh
+<Button variant="secondary">Detalhes</Button>      // eye
+
+// Rótulo desconhecido: vale o ícone da variante
+<Button variant="secondary">Conciliar</Button>     // chevron-right
+
+// A prop icon sempre vence; icon={false} tira o ícone
+<Button icon="rocket">Salvar</Button>
+<Button variant="ghost" icon={false}>Sem ícone</Button>
+
+// Rótulos do seu app (uma vez, no entry):
+registerButtonIcons({ conciliar: 'arrows-exchange', 'baixar danfse': 'file-type-pdf' });`}>
+          <div className="demo-gap">
+            <Button variant="secondary">Cancelar</Button>
+            <Button>Salvar</Button>
+            <Button variant="secondary">Voltar</Button>
+            <Button variant="danger">Excluir</Button>
+            <Button variant="ghost">Tentar de novo</Button>
+            <Button variant="secondary">Detalhes</Button>
+            <Button variant="secondary">Conciliar</Button>
+            <Button icon="rocket">Salvar</Button>
+            <Button variant="ghost" icon={false}>Sem ícone</Button>
+          </div>
+          <p className="docs-note">
+            Vale a primeira palavra conhecida do rótulo, sem acento nem maiúsculas: <code>Cancelar edição</code> usa o mesmo ícone de <code>Cancelar</code>.
+            Um botão cujo conteúdo já começa por um ícone ou spinner próprio não ganha um segundo.
+          </p>
+        </Demo>
+      </SubSection>
+      <SubSection title="Carregando">
+        <BotaoCarregando />
+      </SubSection>
       <SubSection title="Variantes">
         <Demo code={`<Button icon="check">Primário</Button>
 <Button variant="accent" icon="star">Accent</Button>
@@ -339,6 +391,27 @@ const DT_COLS = [
   { key: 'visitas', label: 'Visitas' }
 ];
 
+/* Dados da demonstração do filtro no cabeçalho */
+const FLT_DATA = [
+  { id: 1, cliente: 'Arena Eventos Ltda', centro: 'Comercial', vencimento: '2026-11-28', valor: 18400, situacao: 'Aberto' },
+  { id: 2, cliente: 'Loja Alto da Glória', centro: 'Varejo', vencimento: '2026-11-15', valor: 7250.5, situacao: 'Vencido' },
+  { id: 3, cliente: 'Patrocínio Master S.A.', centro: 'Comercial', vencimento: '2026-12-10', valor: 250000, situacao: 'Aberto' },
+  { id: 4, cliente: 'Camarote 1909', centro: 'Estádio', vencimento: '2026-10-30', valor: 12800, situacao: 'Recebido' },
+  { id: 5, cliente: 'Escolinha Coxa Kids', centro: 'Base', vencimento: '2026-11-05', valor: 3900, situacao: 'Recebido' },
+  { id: 6, cliente: 'Sócio Coxa Empresas', centro: 'Varejo', vencimento: '2026-12-01', valor: 46200, situacao: 'Aberto' },
+  { id: 7, cliente: 'Buffet do Estádio', centro: 'Estádio', vencimento: '2026-11-20', valor: 9100, situacao: 'Vencido' },
+  { id: 8, cliente: 'Licenciados Paraná', centro: 'Comercial', vencimento: '2026-12-18', valor: 31750, situacao: 'Aberto' }
+];
+const FLT_COR = { Aberto: 'blue', Vencido: 'orange', Recebido: 'green' };
+const brl = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const FLT_COLS = [
+  { key: 'cliente', label: 'Cliente', render: r => <strong>{r.cliente}</strong> },
+  { key: 'centro', label: 'Centro de custo', filter: 'select' },
+  { key: 'vencimento', label: 'Vencimento', filter: 'date', render: r => r.vencimento.split('-').reverse().join('/') },
+  { key: 'valor', label: 'Valor', filter: false, render: r => brl(r.valor), className: 'text-right', thClassName: 'text-right' },
+  { key: 'situacao', label: 'Situação', filter: 'select', render: r => <Badge color={FLT_COR[r.situacao]}>{r.situacao}</Badge> }
+];
+
 export function SecTabelas() {
   const [sel, setSel] = useState([]);
   const selectable = TBL_ROWS.filter(r => !r.del);
@@ -348,7 +421,7 @@ export function SecTabelas() {
 
   return (
     <DocsSection id="tabelas" icon="table" title="Tabelas"
-      desc="DataTable é o padrão: ordenação, busca, colunas visíveis, exportação CSV (com escolha de colunas) e paginação já embutidas. Para casos específicos, componha manualmente com TableWrap/Table.">
+      desc="DataTable é o padrão: ordenação, busca, filtro por coluna no cabeçalho, colunas visíveis, exportação CSV (com escolha de colunas) e paginação já embutidas. Para casos específicos, componha manualmente com TableWrap/Table.">
       <SubSection title="Padrão: DataTable">
         <p style={{ margin: '4px 0 10px', fontSize: '.84rem', color: 'var(--text2)' }}>
           Clique no cabeçalho para ordenar; use o menu <strong>Colunas</strong> para mostrar/ocultar e
@@ -366,6 +439,29 @@ const columns = [
 <DataTable columns={columns} data={rows} perPage={6} searchable exportName="visitantes.csv" />
 // por coluna: sortable={false}, exportable={false}, render/sortValue/exportValue`}>
           <DataTable columns={DT_COLS} data={DT_DATA} perPage={6} searchable exportName="visitantes.csv" />
+        </Demo>
+      </SubSection>
+
+      <SubSection title="Filtro no cabeçalho">
+        <p style={{ margin: '4px 0 10px', fontSize: '.84rem', color: 'var(--text2)' }}>
+          Uma segunda linha do cabeçalho, com um campo por coluna: texto ("contém", sem acento nem caixa),
+          lista com os valores que a tabela tem, ou período. Vale junto com a ordenação, a paginação e o CSV.
+        </p>
+        <Demo code={`const columns = [
+  { key: 'cliente', label: 'Cliente' },                              // texto (padrão com columnFilters)
+  { key: 'centro', label: 'Centro de custo', filter: 'select' },     // lista com os valores da tabela
+  { key: 'vencimento', label: 'Vencimento', filter: 'date' },        // período De/Até (AAAA-MM-DD)
+  { key: 'valor', label: 'Valor', filter: false },                   // sem filtro
+  { key: 'situacao', label: 'Situação', filter: 'select', render: r => <Badge>...</Badge> }
+];
+
+<DataTable columnFilters columns={columns} data={rows} perPage={5} />
+
+// Sem columnFilters, só filtram as colunas que declararem filter.
+// Quando a célula mostra algo diferente do valor bruto:
+//   filter: { type: 'select', value: row => row.status.nome, label: v => v.toUpperCase(), options: [...] }
+// initialFilters={{ situacao: 'Aberto' }} já abre filtrado; onFiltersChange={f => ...} avisa o app.`}>
+          <DataTable columnFilters columns={FLT_COLS} data={FLT_DATA} perPage={5} exportName="titulos.csv" />
         </Demo>
       </SubSection>
 
@@ -472,6 +568,26 @@ export function SecStatCards() {
           <StatCard icon="file-text" color="purple" value="87" label="Documentos" />
         </StatCards>
       </Demo>
+      <SubSection title="Destaque, unidade e tendência (1.2)">
+        <Demo code={`<StatCards>
+  <StatCard featured icon="cash" color="green" unit="R$"
+    value={<CountUp value={1.28} decimals={2} suffix=" mi" />}
+    label="Recebido no mês" spark={[520, 610, 580, 760, 700, 880, 820, 990, 1280]} />
+  <StatCard icon="calendar-due" color="blue" unit="R$" value="742 mil"
+    label="A receber em 30 dias" spark={[780, 720, 800, 750, 690, 760, 700, 770, 742]} />
+  <StatCard icon="receipt" color="purple" value="148" label="Títulos em aberto" />
+</StatCards>
+// unit é o prefixo pequeno; featured destaca um cartão; spark desenha o minigráfico`}>
+          <StatCards>
+            <StatCard featured icon="cash" color="green" unit="R$"
+              value={<CountUp value={1.28} decimals={2} suffix=" mi" />}
+              label="Recebido no mês" spark={[520, 610, 580, 760, 700, 880, 820, 990, 1280]} />
+            <StatCard icon="calendar-due" color="blue" unit="R$" value="742 mil"
+              label="A receber em 30 dias" spark={[780, 720, 800, 750, 690, 760, 700, 770, 742]} />
+            <StatCard icon="receipt" color="purple" value="148" label="Títulos em aberto" />
+          </StatCards>
+        </Demo>
+      </SubSection>
     </DocsSection>
   );
 }

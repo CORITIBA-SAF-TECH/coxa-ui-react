@@ -1,8 +1,16 @@
+import { useRef } from 'react';
+import { useSlideIndicator } from '../hooks/useSlideIndicator.js';
+
 /* Abas sublinhadas (controladas):
    <Tabs tabs={[{id:'todos',label:'Todos'},{id:'ativos',label:'Ativos'}]}
          active={aba} onChange={setAba} />
    <TabPanel show={aba==='todos'}>...</TabPanel> */
 export function Tabs({ tabs = [], active, onChange }) {
+  /* sublinhado deslizante da aba ativa: não aparece no layout clássico */
+  const box = useRef(null);
+  const ind = useRef(null);
+  useSlideIndicator(box, ind, '.tab.active', 'x');
+
   function onKey(e, i) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     e.preventDefault();
@@ -10,7 +18,8 @@ export function Tabs({ tabs = [], active, onChange }) {
     onChange?.(tabs[next].id);
   }
   return (
-    <div className="tabs" role="tablist">
+    <div className="tabs" role="tablist" ref={box}>
+      <span className="tab-ind" ref={ind} aria-hidden="true" />
       {tabs.map((t, i) => {
         const sel = active === t.id;
         return (

@@ -1,5 +1,15 @@
 import { useState } from 'react';
 
+/* Título de grupo: separa os blocos da documentação, na mesma ordem do menu lateral */
+export function DocsGroup({ title, desc }) {
+  return (
+    <div className="docs-group">
+      <span className="docs-group-title">{title}</span>
+      {desc && <span className="docs-group-desc">{desc}</span>}
+    </div>
+  );
+}
+
 /* Seção da documentação com âncora, título e descrição */
 export function DocsSection({ id, icon, title, desc, children }) {
   return (

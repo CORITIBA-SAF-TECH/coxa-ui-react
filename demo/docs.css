@@ -1,53 +1,10 @@
-/* Estilos da página de documentação: portados do index.html do coxa-ui */
+/* Estilos da página de documentação (não fazem parte da biblioteca) */
 
+/* A documentação rola dentro do <Main> da lib; o espaçamento é do .docs-content */
 .docs-main {
-  flex: 1;
-  min-width: 0;
+  padding: 0;
   background: var(--bg);
-  overflow-y: auto;
-  min-height: 0;
   scroll-behavior: smooth;
-}
-
-.docs-topbar {
-  flex-shrink: 0;
-  z-index: 100;
-  background: var(--hdr-bg);
-  padding: 0 28px 0 30px;   /* folga à esquerda p/ não colar no botão da sidebar */
-  min-height: 58px;   /* igual ao header da lib, p/ o botão da sidebar centralizar */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  border-bottom: 1px solid var(--hdr-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
-}
-
-.docs-topbar h1 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--hdr-text);
-}
-
-.docs-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Botões ghost sobre o cabeçalho offwhite */
-.docs-topbar .btn-ghost {
-  color: var(--text2) !important;
-  border-color: var(--border2);
-}
-
-.docs-topbar .btn-ghost:hover {
-  color: var(--primary) !important;
-  border-color: var(--primary);
-}
-
-.docs-topbar .icon-btn {
-  color: var(--hdr-text);
 }
 
 .docs-content {
@@ -117,12 +74,19 @@ html.dark .docs-section-title { color: #6ee7b7; }
   margin: 0;
 }
 
+/* separate + spacing 0 (em vez de collapse) para o fundo acompanhar os cantos arredondados */
 .docs-table {
   width: 100%;
   font-size: .84rem;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
 }
+.docs-table tr:last-child td { border-bottom: 0; }
 
 .docs-table th {
   text-align: left;
@@ -263,3 +227,85 @@ html.dark .cls { color: #6ee7b7; }
   .docs-content { padding: 20px 16px 40px; }
   .color-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── Demonstrações das peças novas (1.2) ── */
+.docs-note { font-size: .84rem; color: var(--text2); margin-top: 12px; line-height: 1.6; }
+.docs-note code, .docs-note .cx-kbd { margin: 0 2px; }
+
+.demo-hdr-strip {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+  background: var(--hdr-bg); border: 1px solid var(--hdr-border);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+}
+.demo-hdr-strip .hdr-search { margin-left: 0; }
+
+.demo-kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin-top: 14px; font-size: .9rem; color: var(--text2); }
+.demo-kv strong { color: var(--text); }
+.demo-num { font-size: 1.6rem; font-weight: 800; color: var(--text); min-width: 150px; }
+
+/* ── Telas de exemplo ── */
+.ex-grid-2 { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 1100px) { .ex-grid-2 { grid-template-columns: minmax(0, 1fr); } }
+.ex-row { cursor: pointer; }
+.ex-row:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.ex-row td .text-mono { white-space: nowrap; }
+.ex-cli { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ex-go { color: var(--text3); opacity: 0; transform: translateX(-6px); transition: opacity .18s, transform .25s; }
+.ex-row:hover .ex-go, .ex-row:focus-visible .ex-go { opacity: 1; transform: none; }
+.ex-dt-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.ex-dt-top .badge { margin-left: auto; }
+.ex-valor { font-size: 1.5rem !important; font-variant-numeric: tabular-nums; }
+.ex-form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+
+/* ── Título de grupo da documentação (mesma ordem do menu lateral) ── */
+.docs-group {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px;
+  margin: 0 0 30px; padding: 12px 18px;
+  border-radius: 14px; background: var(--sb-bg, #00544d); color: #fff;
+}
+.docs-section + .docs-group { margin-top: 84px; }
+.docs-group-title { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent); }
+.docs-group-desc { font-size: .86rem; color: rgba(255, 255, 255, .85); }
+
+/* Demonstrações da árvore e do carregamento */
+.demo-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.demo-panel { position: relative; border: 1px solid var(--border); border-radius: 14px; padding: 12px; background: var(--surface); min-width: 0; }
+.demo-panel-title { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 2px 6px 8px; }
+.demo-anim { display: flex; flex-wrap: wrap; gap: 10px; }
+.demo-anim > div { padding: 10px 14px; border-radius: 10px; background: var(--primary-lt); color: var(--primary); font-size: .84rem; font-weight: 600; }
+html.dark .demo-anim > div { color: #6ee7b7; }
+
+/* Moldura do rodapé de demonstração */
+.demo-ftr { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+/* Demonstração das variações de carregamento */
+.demo-ld-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.demo-ld { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 12px 14px; text-align: center; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+.demo-ld-art { display: flex; align-items: center; justify-content: center; width: 100%; height: 76px; }
+.demo-ld strong { font-size: .86rem; }
+.demo-ld code { font-size: .72rem; }
+.demo-ld small { font-size: .72rem; color: var(--text3); line-height: 1.35; margin-top: 2px; }
+.demo-ld-dark { display: flex; align-items: center; flex-wrap: wrap; gap: 30px; margin-top: 16px; padding: 22px 26px; border-radius: 14px; background: linear-gradient(135deg, var(--sb-bg, #00544d), var(--sb-dark, #003e38)); }
+.docs-example .steps + .steps { margin-top: 6px; }
+
+/* ── Abertura: sobre a CoxaUI e o clube ── */
+.sobre-hero {
+  display: flex; align-items: center; gap: 26px; flex-wrap: wrap;
+  padding: 28px 30px; margin-bottom: 26px; border-radius: 20px; color: #fff;
+  background: linear-gradient(135deg, var(--sb-bg, #00544d) 0%, var(--sb-dark, #003e38) 100%);
+}
+.sobre-hero img { width: 104px; height: 132px; object-fit: contain; flex-shrink: 0; }
+.sobre-hero > div { flex: 1; min-width: 240px; }
+.sobre-hero h2 { color: #fff; font-size: 1.5rem; line-height: 1.25; margin-bottom: 10px; }
+.sobre-hero p { color: rgba(255, 255, 255, .88); font-size: .95rem; line-height: 1.6; }
+.sobre-texto { font-size: .92rem; color: var(--text2); line-height: 1.7; margin-bottom: 12px; max-width: 78ch; }
+.sobre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+.sobre-card { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+.sobre-card > i { font-size: 1.5rem; color: var(--primary); }
+html.dark .sobre-card > i { color: #6ee7b7; }
+.sobre-card strong { font-size: .92rem; }
+.sobre-card span { font-size: .82rem; color: var(--text2); line-height: 1.5; }
+.sobre-fatos { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 14px 0 4px; }
+.sobre-fatos > div { padding: 12px 16px; border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; background: var(--surface); }
+.sobre-fatos small { display: block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); }
+.sobre-fatos strong { font-size: .92rem; }

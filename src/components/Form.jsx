@@ -13,10 +13,11 @@ export function FormRow({ cols = 2, children }) {
   return <div className={cls}>{children}</div>;
 }
 
-/* Grupo label + campo. <FormGroup label="Nome" required hint="(opcional)"> */
-export function FormGroup({ label, required, hint, fieldHint, children }) {
+/* Grupo label + campo. <FormGroup label="Nome" required hint="(opcional)">
+   error="Informe o nome" marca o campo (em laranja) e mostra a mensagem abaixo dele. */
+export function FormGroup({ label, required, hint, fieldHint, error, children }) {
   return (
-    <div className="form-g">
+    <div className={`form-g ${error ? 'has-err' : ''}`.trim()}>
       {label && (
         <label>
           {label}
@@ -25,6 +26,9 @@ export function FormGroup({ label, required, hint, fieldHint, children }) {
         </label>
       )}
       {children}
+      {error && (
+        <div className="field-err" role="alert"><i className="ti ti-alert-circle" aria-hidden="true" /> {error}</div>
+      )}
       {fieldHint && (
         <div className="field-hint"><i className="ti ti-info-circle" /> {fieldHint}</div>
       )}

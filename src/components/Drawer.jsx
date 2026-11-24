@@ -1,5 +1,7 @@
+import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useOverlay } from '../hooks/useOverlay.js';
+import { useIsoLayoutEffect } from '../hooks/useSlideIndicator.js';
 
 /* Painel lateral deslizante (offcanvas). Controlado: open + onClose.
    Fecha ao clicar no overlay ou com Esc; prende o foco enquanto aberto.
@@ -10,9 +12,13 @@ import { useOverlay } from '../hooks/useOverlay.js';
    side: 'right' (padrão) | 'left' */
 export function Drawer({ open, onClose, title, icon, side = 'right', width, actions, children }) {
   const ref = useOverlay(open, onClose);
+  /* fechado, o drawer continua no DOM (para a transição): inert o tira da ordem de Tab */
+  const ov = useRef(null);
+  useIsoLayoutEffect(() => { if (ov.current) ov.current.inert = !open; }, [open]);
   if (typeof document === 'undefined') return null;
   return createPortal(
     <div
+      ref={ov}
       className={`drawer-overlay ${open ? 'open' : ''}`.trim()}
       onClick={e => { if (e.target === e.currentTarget) onClose?.(); }}
     >

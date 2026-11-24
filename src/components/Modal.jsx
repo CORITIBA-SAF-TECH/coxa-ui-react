@@ -1,5 +1,7 @@
+import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useOverlay } from '../hooks/useOverlay.js';
+import { useIsoLayoutEffect } from '../hooks/useSlideIndicator.js';
 
 const SIZES = { xs: 'modal-xs', sm: 'modal-sm', lg: 'modal-lg', xl: 'modal-xl', full: 'modal-full' };
 
@@ -9,9 +11,13 @@ const SIZES = { xs: 'modal-xs', sm: 'modal-sm', lg: 'modal-lg', xl: 'modal-xl', 
    Tamanhos: xs | sm | (padrão 480px) | lg | xl | full */
 export function Modal({ open, onClose, title, icon, size, actions, children }) {
   const ref = useOverlay(open, onClose);
+  /* fechado, o modal continua no DOM (para a transição): inert o tira da ordem de Tab */
+  const ov = useRef(null);
+  useIsoLayoutEffect(() => { if (ov.current) ov.current.inert = !open; }, [open]);
   if (typeof document === 'undefined') return null;
   return createPortal(
     <div
+      ref={ov}
       className={`modal-overlay ${open ? 'open' : ''}`.trim()}
       onClick={e => { if (e.target === e.currentTarget) onClose?.(); }}
     >

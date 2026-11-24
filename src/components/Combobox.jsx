@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { t, useI18n } from '../i18n/core.js';
 
 function norm(s) {
   return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -19,8 +20,9 @@ export function Combobox({
     () => options.map(o => (typeof o === 'object' ? o : { label: String(o), value: o })),
     [options]
   );
+  const { lang } = useI18n();
   const selected = opts.find(o => o.value === value);
-  const [text, setText] = useState(selected ? selected.label : '');
+  const [text, setText] = useState(selected ? t(selected.label) : '');
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [hl, setHl] = useState(-1);
@@ -29,9 +31,9 @@ export function Combobox({
   /* sincroniza o texto quando o value muda por fora */
   useEffect(() => {
     const sel = opts.find(o => o.value === value);
-    if (sel) setText(sel.label);
+    if (sel) setText(t(sel.label));
     else if (value == null || value === '') setText('');
-  }, [value, opts]);
+  }, [value, opts, lang]);
 
   /* fecha ao clicar fora */
   useEffect(() => {
@@ -42,10 +44,10 @@ export function Combobox({
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
 
-  const visible = opts.filter(o => !query || norm(o.label).includes(norm(query)));
+  const visible = opts.filter(o => !query || norm(t(o.label)).includes(norm(query)) || norm(o.label).includes(norm(query)));
 
   function pick(opt) {
-    setText(opt.label);
+    setText(t(opt.label));
     setQuery('');
     setOpen(false);
     setHl(-1);
@@ -128,9 +130,10 @@ export function MultiCombobox({
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
 
+  useI18n();
   const isSel = v => value.some(x => x === v);
   const selectedOpts = opts.filter(o => isSel(o.value));
-  const visible = opts.filter(o => !query || norm(o.label).includes(norm(query)));
+  const visible = opts.filter(o => !query || norm(t(o.label)).includes(norm(query)) || norm(o.label).includes(norm(query)));
 
   function toggle(opt) {
     const next = isSel(opt.value) ? value.filter(v => v !== opt.value) : [...value, opt.value];
@@ -160,7 +163,7 @@ export function MultiCombobox({
         {selectedOpts.map(o => (
           <span className="combo-chip" key={o.value ?? o.label}>
             {o.label}
-            <button type="button" onClick={e => { e.stopPropagation(); removeAt(o.value); }} aria-label={`Remover ${o.label}`}>
+            <button type="button" onClick={e => { e.stopPropagation(); removeAt(o.value); }} aria-label={t('Remover {nome}', { nome: t(o.label) })}>
               <i className="ti ti-x" />
             </button>
           </span>
